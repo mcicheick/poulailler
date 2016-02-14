@@ -76,4 +76,16 @@ public abstract class ModelTable extends AbstractTableModel {
     public Model getModel() {
         return model;
     }
+
+
+    public void removeRow(int selected) {
+        if (selected < 0 || selected >= getRowCount()) {
+            return;
+        }
+        models.remove(selected);
+    }
+
+    public void removeRow(Model model) {
+        models.remove(model);
+    }
 }

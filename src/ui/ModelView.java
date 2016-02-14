@@ -4,13 +4,11 @@ import data.ModelTable;
 import data.TableSorter;
 import models.Model;
 
+import javax.persistence.PersistenceException;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -52,6 +50,28 @@ public abstract class ModelView extends JPanel implements LayoutManager {
         // Use a scrollbar, in case there are many columns.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+        table.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int selected = table.getSelectedRowCount();
+                Model model = dataBase.getRow(selected);
+                if (model == null) {
+                    return;
+                }
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_ENTER:
+                        try {
+                            saveButton.doClick();
+                        } catch (PersistenceException pe) {
+                            pe.printStackTrace();
+                        }
+                        break;
+                    default:
+                        // Do nothing.
+                }
+            }
+        });
+
         // Install a mouse listener in the TableHeader as the sorter UI.
         sorter.addMouseListenerToHeaderInTable(table);
 
@@ -65,7 +85,11 @@ public abstract class ModelView extends JPanel implements LayoutManager {
                     int selected = selecteds[i];
                     Model model = dataBase.getRow(selected);
                     if (model != null) {
-                        model.save();
+                        try {
+                            model.save();
+                        } catch (PersistenceException pe) {
+                            pe.printStackTrace();
+                        }
                     }
                 }
                 dataBase.fireTableDataChanged(); // Tell the listeners a new table has arrived.
@@ -77,6 +101,7 @@ public abstract class ModelView extends JPanel implements LayoutManager {
         newButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dataBase.addRow();
+                dataBase.fireTableDataChanged();
             }
         });
         add(newButton);
@@ -88,11 +113,71 @@ public abstract class ModelView extends JPanel implements LayoutManager {
             public void mouseClicked(MouseEvent e) {
                 int selected = table.getSelectedRow();
                 Model model = dataBase.getRow(selected);
-                if(e.getClickCount() == 2) {
+                if (e.getClickCount() == 2) {
                     fireModel(model);
                 }
             }
         });
+
+        tableAggregate.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    JPopupMenu popupMenu = new JPopupMenu();
+                    JMenuItem newItem = new JMenuItem("New");
+                    newItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            newButton.doClick();
+                        }
+                    });
+                    popupMenu.add(newItem);
+                    popupMenu.show(tableAggregate, e.getX(), e.getY());
+                }
+            }
+        });
+
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    JPopupMenu popupMenu = new JPopupMenu();
+                    JMenuItem newItem = new JMenuItem("Delete");
+                    newItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            int selects[] = table.getSelectedRows();
+                            java.util.List<Model> toRemove = new ArrayList<>();
+                            for (int i = 0; i < selects.length; i++) {
+                                int selected = selects[i];
+                                Model model = dataBase.getRow(selected);
+                                if (model == null) {
+                                    continue;
+                                }
+                                if (model.getId() != null) {
+                                    model.delete();
+                                }
+                                toRemove.add(model);
+                            }
+
+                            for (int i = 0; i < toRemove.size(); i++) {
+                                Model model = toRemove.get(i);
+                                dataBase.removeRow(model);
+                            }
+                            dataBase.fireTableDataChanged();
+                        }
+                    });
+                    int selects[] = table.getSelectedRows();
+                    if (selects.length > 0) {
+                        popupMenu.add(newItem);
+                        popupMenu.show(table, e.getX(), e.getY());
+                    }
+                }
+            }
+        });
+
     }
 
     private void fireModel(Model model) {
@@ -133,7 +218,6 @@ public abstract class ModelView extends JPanel implements LayoutManager {
     }
 
     /**
-     *
      * @param l
      */
     public void addModelListener(ModelListener l) {
@@ -141,7 +225,6 @@ public abstract class ModelView extends JPanel implements LayoutManager {
     }
 
     /**
-     *
      * @param l
      */
     public void removeModelListener(ModelListener l) {

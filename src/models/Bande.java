@@ -30,6 +30,7 @@ public class Bande extends Model {
     public Bande() {
         super();
         transactions = new ArrayList<>();
+        arrived_date = new Date();
     }
 
     public Date getArrived_date() {

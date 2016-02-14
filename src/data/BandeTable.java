@@ -86,7 +86,6 @@ public class BandeTable extends ModelTable {
         Bande bande = new Bande();
         bande.setUser((User) model);
         models.add(bande);
-        fireTableDataChanged();
     }
 
     @Override

@@ -7,10 +7,7 @@ import models.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 /**
  * Created by sissoko on 14/02/2016.
@@ -19,6 +16,10 @@ public class ModelViewer extends JFrame implements ModelListener {
 
     protected JScrollPane mainPanel;
     protected BandeView bandeView;
+    protected JButton retour;
+    protected JMenuBar menuBar;
+    protected JMenu menuFile;
+    protected JMenu menuEdit;
 
     private static class History {
         ModelView view;
@@ -43,7 +44,7 @@ public class ModelViewer extends JFrame implements ModelListener {
         mainPanel.setViewportView(bandeView);
         getContentPane().add(mainPanel);
         JToolBar toolBar =  new JToolBar();
-        JButton retour = new JButton("Retour");
+        retour = new JButton("Retour");
         retour.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,6 +81,26 @@ public class ModelViewer extends JFrame implements ModelListener {
         });
         toolBar.add(client);
         getContentPane().add(BorderLayout.NORTH, toolBar);
+
+        setMenuBar();
+    }
+
+    private void setMenuBar() {
+        menuBar = new JMenuBar();
+        menuFile = new JMenu("File");
+        JMenuItem menuItemBack = new JMenuItem("Back");
+        menuItemBack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                retour.doClick();
+            }
+        });
+        menuItemBack.setHorizontalTextPosition(JButton.RIGHT);
+        menuFile.add(menuItemBack);
+        menuBar.add(menuFile);
+        menuEdit = new JMenu("Edit");
+        menuBar.add(menuEdit);
+        setJMenuBar(menuBar);
     }
 
     private void addHistory(ModelView view) {
@@ -117,8 +138,13 @@ public class ModelViewer extends JFrame implements ModelListener {
 
     }
 
-
     public static void main(String[] args) {
+        try {
+            java.lang.System.setProperty("apple.laf.useScreenMenuBar", "true");
+        } catch (Exception e) {
+            // try the older menu bar property
+            java.lang.System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+        }
         ModelViewer frame = new ModelViewer();
         frame.pack();
         frame.setBounds(200, 200, 740, 480);
