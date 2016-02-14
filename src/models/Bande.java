@@ -2,6 +2,7 @@ package models;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class Bande extends Model {
     private Date arrived_date;
     @Column(name = "INITIAL_COUNT")
     private Integer initial_count;
+    @Column(name = "REMAIN_COUNT")
+    private Integer remain_count;
     @ManyToOne
     @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User user;
@@ -26,6 +29,7 @@ public class Bande extends Model {
 
     public Bande() {
         super();
+        transactions = new ArrayList<>();
     }
 
     public Date getArrived_date() {
@@ -42,6 +46,14 @@ public class Bande extends Model {
 
     public void setInitial_count(Integer initial_count) {
         this.initial_count = initial_count;
+    }
+
+    public Integer getRemain_count() {
+        return remain_count;
+    }
+
+    public void setRemain_count(Integer remain_count) {
+        this.remain_count = remain_count;
     }
 
     public User getUser() {

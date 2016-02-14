@@ -21,6 +21,8 @@ public class Payment extends Model implements Serializable {
     private Transaction transaction;
 
     public Payment() {
+        super();
+        this.payment_date = new Date();
     }
 
     public Double getAmount() {

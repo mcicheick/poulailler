@@ -2,6 +2,7 @@ package models;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class Transaction extends Model {
     public Transaction() {
         super();
         this.transaction_date = new Date();
+        payments = new ArrayList<>();
     }
 
     public Date getTransaction_date() {

@@ -3,6 +3,7 @@ package models;
 import controllers.PaymentController;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,7 @@ public class Client extends Model {
 
     public Client() {
         super();
+        transactions = new ArrayList<>();
     }
 
     public List<Payment> getPayments() {

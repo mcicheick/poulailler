@@ -5,6 +5,7 @@ import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class User extends Model {
 
     public User() {
         super();
+        bandes = new ArrayList<>();
     }
 
     public String getFirst_name() {
