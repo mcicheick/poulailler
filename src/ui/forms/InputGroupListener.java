@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ui;
+package ui.forms;
 
 import java.awt.event.KeyListener;
 

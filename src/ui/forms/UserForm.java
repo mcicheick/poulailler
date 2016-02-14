@@ -1,4 +1,4 @@
-package ui;
+package ui.forms;
 
 import controllers.UserController;
 import models.User;
