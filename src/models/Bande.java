@@ -1,5 +1,7 @@
 package models;
 
+import controllers.BandeController;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public class Bande extends Model {
     }
 
     public List<Transaction> getTransactions() {
-        return transactions;
+        return BandeController.getInstance().select("t from Transaction t where t.bande = ?1", this).getResultList();
     }
 
     public void setTransactions(List<Transaction> transactions) {
@@ -76,5 +78,21 @@ public class Bande extends Model {
     @Override
     public String toString() {
         return String.format("Bande[%d] du %s", getId(), new SimpleDateFormat("dd/MM/yyyy").format(arrived_date));
+    }
+
+    public void updateQuantity(Double quantity) {
+        if(quantity != null) {
+            this.remain_count -= quantity.intValue();
+            save();
+        }
+    }
+
+    public Double getSold() {
+        Double sold = 0.0;
+        for (int i = 0; i < transactions.size(); i++) {
+            Transaction transaction = transactions.get(i);
+            sold += transaction.getPaid();
+        }
+        return sold;
     }
 }

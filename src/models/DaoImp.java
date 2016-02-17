@@ -139,4 +139,6 @@ public abstract class DaoImp {
     public int hashCode() {
         return getId() != null ? getId().hashCode() : 0;
     }
+
+
 }

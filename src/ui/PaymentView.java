@@ -2,6 +2,7 @@ package ui;
 
 import controllers.TransactionController;
 import data.PaymentTable;
+import models.Model;
 import models.Transaction;
 
 import javax.swing.*;
@@ -31,6 +32,11 @@ public class PaymentView extends ModelView {
         comboBoxTransaction.setModel(new DefaultComboBoxModel<Transaction>(new Vector<Transaction>(TransactionController.getInstance().select("o from Transaction o").getResultList())));
         colorColumnTransaction.setCellEditor(new DefaultCellEditor(comboBoxTransaction));
 
+    }
+
+    @Override
+    public void fireModel(Model model) {
+        // Do nothing
     }
 
     public static void main(String[] args) {

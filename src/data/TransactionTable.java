@@ -20,7 +20,7 @@ public class TransactionTable extends ModelTable {
     public TransactionTable(List models) {
         super(models);
         this.columnNames = new String[]{"ID", "DATE TRANSACTION", "PRIX UNITAIRE", "PRIX PAR KILO", "QUANTITÉ",
-                "POIDS", "BANDE", "CLIENT"};
+                "POIDS", "BANDE", "CLIENT", "RESTANT"};
     }
 
     @Override
@@ -43,6 +43,8 @@ public class TransactionTable extends ModelTable {
                 return transaction.getBande();
             case 7:
                 return transaction.getClient();
+            case 8:
+                return transaction.getRemainAmount();
         }
         return null;
     }
@@ -91,6 +93,8 @@ public class TransactionTable extends ModelTable {
                 return Bande.class;
             case 7:
                 return Client.class;
+            case 8:
+                return Double.class;
         }
         return super.getColumnClass(columnIndex);
     }
@@ -115,5 +119,10 @@ public class TransactionTable extends ModelTable {
         }
         models.add(bande);
         fireTableDataChanged();
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return super.isCellEditable(rowIndex, columnIndex) && columnIndex < 8;
     }
 }

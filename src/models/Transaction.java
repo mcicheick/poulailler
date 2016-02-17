@@ -1,5 +1,7 @@
 package models;
 
+import controllers.PaymentController;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +41,39 @@ public class Transaction extends Model {
     public Transaction() {
         super();
         this.transaction_date = new Date();
-        payments = new ArrayList<>();
+        this.payments = new ArrayList<>();
+        this.unit_price = 0d;
+        this.price_by_kilo = 0d;
+        this.quantity = 0d;
+        this.weight = 0.0;
+    }
+
+    @Override
+    public <T extends DaoImp> void create() {
+        super.create();
+        if(bande != null) {
+            bande.updateQuantity(quantity);
+        }
+    }
+
+    public Double getCost() {
+        return quantity * unit_price + weight * price_by_kilo;
+    }
+
+    public Double getPaid() {
+        Double paid = 0.0;
+        if(getId() != null) {
+            List<Payment> payments = PaymentController.getInstance()
+                    .select("p from Payment p where p.transaction = ?1", this).getResultList();
+            for (int i = 0; i < payments.size(); i++) {
+                paid += payments.get(i).getAmount();
+            }
+        }
+        return paid;
+    }
+
+    public Double getRemainAmount() {
+        return getCost() - getPaid();
     }
 
     public Date getTransaction_date() {
@@ -99,7 +133,7 @@ public class Transaction extends Model {
     }
 
     public List<Payment> getPayments() {
-        return payments;
+        return PaymentController.getInstance().select("p from Payment p where p.transaction = ?1", this).getResultList();
     }
 
     public void setPayments(List<Payment> payments) {

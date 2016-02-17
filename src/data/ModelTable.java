@@ -15,6 +15,8 @@ public abstract class ModelTable extends AbstractTableModel {
     protected String[] columnNames = {"ID"};
     protected List<Model> models;
 
+    protected boolean editable = false;
+
     protected Model model;
 
     public ModelTable() {
@@ -27,7 +29,7 @@ public abstract class ModelTable extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex > 0;
+        return columnIndex > 0 && editable;
     }
 
     @Override
@@ -77,6 +79,17 @@ public abstract class ModelTable extends AbstractTableModel {
         return model;
     }
 
+    /**
+     *
+     * @param editable
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
 
     public void removeRow(int selected) {
         if (selected < 0 || selected >= getRowCount()) {

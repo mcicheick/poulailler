@@ -24,6 +24,11 @@ public abstract class ModelView extends JPanel implements LayoutManager {
     protected JButton saveButton;
     protected JButton newButton;
 
+    protected JButton editButton;
+    protected JButton deleteButton;
+
+    protected JPanel header;
+
     protected JTable table;
 
     public ModelView() {
@@ -50,6 +55,76 @@ public abstract class ModelView extends JPanel implements LayoutManager {
         // Use a scrollbar, in case there are many columns.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+        // Install a mouse listener in the TableHeader as the sorter UI.
+        sorter.addMouseListenerToHeaderInTable(table);
+
+        tableAggregate = new JScrollPane(table);
+        tableAggregate.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
+        header = new JPanel();
+
+        saveButton = new JButton("Save");
+
+        //add(saveButton);
+
+        header.add(saveButton);
+
+        newButton = new JButton("New");
+        header.add(newButton);
+
+        editButton = new JButton("Edit");
+        header.add(editButton);
+
+        deleteButton = new JButton("Delete");
+        header.add(deleteButton);
+
+        add(header);
+
+        add(tableAggregate);
+        setLayout(this);
+
+        bind();
+    }
+
+    private void bind() {
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean editable = dataBase.isEditable();
+                if(!editable) {
+                    editButton.setText("Done");
+                } else {
+                    editButton.setText("Edit");
+                }
+                dataBase.setEditable(!editable);
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selects[] = table.getSelectedRows();
+                java.util.List<Model> toRemove = new ArrayList<>();
+                for (int i = 0; i < selects.length; i++) {
+                    int selected = selects[i];
+                    Model model = dataBase.getRow(selected);
+                    if (model == null) {
+                        continue;
+                    }
+                    if (model.getId() != null) {
+                        model.delete();
+                    }
+                    toRemove.add(model);
+                }
+
+                for (int i = 0; i < toRemove.size(); i++) {
+                    Model model = toRemove.get(i);
+                    dataBase.removeRow(model);
+                }
+                dataBase.fireTableDataChanged();
+            }
+        });
+
         table.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -72,12 +147,6 @@ public abstract class ModelView extends JPanel implements LayoutManager {
             }
         });
 
-        // Install a mouse listener in the TableHeader as the sorter UI.
-        sorter.addMouseListenerToHeaderInTable(table);
-
-        tableAggregate = new JScrollPane(table);
-        tableAggregate.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int[] selecteds = table.getSelectedRows();
@@ -95,18 +164,14 @@ public abstract class ModelView extends JPanel implements LayoutManager {
                 dataBase.fireTableDataChanged(); // Tell the listeners a new table has arrived.
             }
         });
-        add(saveButton);
 
-        newButton = new JButton("New");
         newButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dataBase.addRow();
+                dataBase.setEditable(true);
                 dataBase.fireTableDataChanged();
             }
         });
-        add(newButton);
-        add(tableAggregate);
-        setLayout(this);
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -143,30 +208,12 @@ public abstract class ModelView extends JPanel implements LayoutManager {
             public void mouseClicked(MouseEvent e) {
 
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    JPopupMenu popupMenu = new JPopupMenu();
+                    JPopupMenu popupMenu = createPopupMenu();
                     JMenuItem newItem = new JMenuItem("Delete");
                     newItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            int selects[] = table.getSelectedRows();
-                            java.util.List<Model> toRemove = new ArrayList<>();
-                            for (int i = 0; i < selects.length; i++) {
-                                int selected = selects[i];
-                                Model model = dataBase.getRow(selected);
-                                if (model == null) {
-                                    continue;
-                                }
-                                if (model.getId() != null) {
-                                    model.delete();
-                                }
-                                toRemove.add(model);
-                            }
-
-                            for (int i = 0; i < toRemove.size(); i++) {
-                                Model model = toRemove.get(i);
-                                dataBase.removeRow(model);
-                            }
-                            dataBase.fireTableDataChanged();
+                            deleteButton.doClick();
                         }
                     });
                     int selects[] = table.getSelectedRows();
@@ -177,10 +224,23 @@ public abstract class ModelView extends JPanel implements LayoutManager {
                 }
             }
         });
-
     }
 
-    private void fireModel(Model model) {
+    private JPopupMenu createPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+        boolean editable = dataBase.isEditable();
+        JMenuItem editItem = new JMenuItem(editable ? "Done" : "Edit");
+        editItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dataBase.setEditable(!editable);
+            }
+        });
+        popupMenu.add(editItem);
+        return popupMenu;
+    }
+
+    public void fireModel(Model model) {
         for (int i = 0; i < listenerList.size(); i++) {
             listenerList.get(i).fireModel(model);
         }
@@ -209,8 +269,8 @@ public abstract class ModelView extends JPanel implements LayoutManager {
         Rectangle b = parent.getBounds();
         int topHeight = 30;
         int inset = 4;
-        newButton.setBounds(b.width - 2 * inset - 120, inset, 120, 25);
-        saveButton.setBounds(b.width - 2 * inset - 245, inset, 120, 25);
+        header.setBounds(new Rectangle(0,
+                0, b.width, topHeight + inset));
         tableAggregate.setBounds(new Rectangle(inset,
                 inset + topHeight,
                 b.width - 2 * inset,

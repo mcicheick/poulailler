@@ -18,7 +18,7 @@ public class BandeTable extends ModelTable {
 
     public BandeTable(List models) {
         super(models);
-        this.columnNames = new String[]{"ID", "DATE ARRIVÉE", "NOMBRE INITIAL", "NOMBRE RESTANT", "USER"};
+        this.columnNames = new String[]{"ID", "DATE ARRIVÉE", "NOMBRE INITIAL", "NOMBRE RESTANT", "USER", "VENDUS"};
     }
 
     @Override
@@ -35,6 +35,8 @@ public class BandeTable extends ModelTable {
                 return bande.getRemain_count();
             case 4:
                 return bande.getUser();
+            case 5:
+                return bande.getSold();
         }
         return null;
     }
@@ -48,6 +50,9 @@ public class BandeTable extends ModelTable {
                 break;
             case 2:
                 bande.setInitial_count((Integer) aValue);
+                if(bande.getId() == null) {
+                    bande.setRemain_count((Integer) aValue);
+                }
                 break;
             case 3:
                 bande.setRemain_count((Integer) aValue);
@@ -69,6 +74,8 @@ public class BandeTable extends ModelTable {
                 return Integer.class;
             case 4:
                 return User.class;
+            case 5:
+                return Double.class;
         }
         return super.getColumnClass(columnIndex);
     }
@@ -91,5 +98,19 @@ public class BandeTable extends ModelTable {
     @Override
     public void update() {
         this.models = BandeController.getInstance().select("b from Bande b order by b.arrived_date desc").getResultList();
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return super.isCellEditable(rowIndex, columnIndex) && columnIndex != 5;
+    }
+
+    public Double totalSold() {
+        Double sold = 0.0;
+        for (int i = 0; i < models.size(); i++) {
+            Bande bande = (Bande) models.get(i);
+            sold += bande.getSold();
+        }
+        return sold;
     }
 }

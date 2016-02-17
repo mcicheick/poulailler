@@ -23,6 +23,9 @@ public class BandeView extends ModelView {
     public BandeView(BandeTable dataBase) {
         super(dataBase);
         render();
+        JLabel soldLabel = new JLabel();
+        header.add(soldLabel, 0);
+        soldLabel.setText(String.format("Total vendu : %.2f", dataBase.totalSold()));
     }
 
     private void render() {
@@ -44,7 +47,7 @@ public class BandeView extends ModelView {
         BandeView mainPanel = new BandeView();
         frame.getContentPane().add(mainPanel);
         frame.pack();
-        frame.setBounds(200, 200, 640, 480);
+        frame.setBounds(200, 200, 840, 480);
         frame.setVisible(true);
     }
 }
