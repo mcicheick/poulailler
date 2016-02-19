@@ -1,4 +1,4 @@
-package ui.forms;
+package views.forms;
 
 import controllers.BandeController;
 import controllers.ClientController;

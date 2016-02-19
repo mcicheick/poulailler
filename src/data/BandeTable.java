@@ -18,7 +18,7 @@ public class BandeTable extends ModelTable {
 
     public BandeTable(List models) {
         super(models);
-        this.columnNames = new String[]{"ID", "DATE ARRIVÉE", "NOMBRE INITIAL", "NOMBRE RESTANT", "USER", "VENDUS"};
+        this.columnNames = new String[]{"ID", "DATE ARRIVÉE", "PRICE", "NOMBRE INITIAL", "COÛT", "NOMBRE RESTANT", "USER", "VENDUS"};
     }
 
     @Override
@@ -30,12 +30,16 @@ public class BandeTable extends ModelTable {
             case 1:
                 return bande.getArrived_date();
             case 2:
-                return bande.getInitial_count();
+                return bande.getPrice();
             case 3:
-                return bande.getRemain_count();
+                return bande.getInitial_count();
             case 4:
-                return bande.getUser();
+                return bande.getCost();
             case 5:
+                return bande.getRemain_count();
+            case 6:
+                return bande.getUser();
+            case 7:
                 return bande.getSold();
         }
         return null;
@@ -49,15 +53,18 @@ public class BandeTable extends ModelTable {
                 bande.setArrived_date((Date) aValue);
                 break;
             case 2:
+                bande.setPrice((Double) aValue);
+                break;
+            case 3:
                 bande.setInitial_count((Integer) aValue);
                 if(bande.getId() == null) {
                     bande.setRemain_count((Integer) aValue);
                 }
                 break;
-            case 3:
+            case 5:
                 bande.setRemain_count((Integer) aValue);
                 break;
-            case 4:
+            case 6:
                 bande.setUser((User) aValue);
         }
     }
@@ -70,12 +77,13 @@ public class BandeTable extends ModelTable {
             case 1:
                 return Date.class;
             case 2:
-            case 3:
-                return Integer.class;
             case 4:
-                return User.class;
-            case 5:
                 return Double.class;
+            case 3:
+            case 5:
+                return Integer.class;
+            case 6:
+                return User.class;
         }
         return super.getColumnClass(columnIndex);
     }

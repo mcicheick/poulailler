@@ -1,4 +1,4 @@
-package ui;
+package views;
 
 import controllers.BandeController;
 import controllers.ClientController;

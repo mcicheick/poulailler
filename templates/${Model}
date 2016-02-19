@@ -1,0 +1,18 @@
+package models;
+
+import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created by sissoko on ${date}.
+ */
+@Entity
+@Table(name = "T_${MODEL}S")
+public class ${Model} extends Model {
+    public ${Model}(){
+        super();
+    }
+}

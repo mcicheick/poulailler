@@ -25,7 +25,7 @@ public class BandeController extends Controller<Bande> {
 
     @Override
     public Bande findById(Object id) {
-        List<Bande> bandes = find("select o from Client o where o.id = ?1", id).getResultList();
+        List<Bande> bandes = find("select o from Bande o where o.id = ?1", id).getResultList();
         if (bandes.isEmpty()) {
             return null;
         }

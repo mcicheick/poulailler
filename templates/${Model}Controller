@@ -1,0 +1,35 @@
+package controllers;
+
+import models.${Model};
+
+import java.util.List;
+
+/**
+ * Created by sissoko on 11/02/2016.
+ */
+
+public class ${Model}Controller extends Controller<${Model}> {
+
+    private static ${Model}Controller instance;
+
+    private ${Model}Controller() {
+    }
+
+    public static ${Model}Controller getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        instance = new ${Model}Controller();
+        return instance;
+    }
+
+    @Override
+    public ${Model} findById(Object id) {
+        List<${Model}> ${model}s = find("select o from ${Model} o where o.id = ?1", id).getResultList();
+        if (${model}s.isEmpty()) {
+            return null;
+        }
+        return ${model}s.get(0);
+    }
+
+}

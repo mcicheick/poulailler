@@ -1,4 +1,4 @@
-package ui.forms;
+package views.forms;
 
 import controllers.ClientController;
 import models.Payment;

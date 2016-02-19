@@ -1,4 +1,4 @@
-package ui;
+package views;
 
 import data.ModelTable;
 import data.TableSorter;
@@ -275,6 +275,14 @@ public abstract class ModelView extends JPanel implements LayoutManager {
                 inset + topHeight,
                 b.width - 2 * inset,
                 b.height - 2 * inset - topHeight));
+    }
+
+    public void setModel(Model model) {
+        this.dataBase.setModel(model);
+    }
+
+    public Model getModel() {
+        return this.dataBase.getModel();
     }
 
     /**

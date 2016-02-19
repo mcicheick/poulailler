@@ -1,4 +1,4 @@
-package ui;
+package views;
 
 import controllers.TransactionController;
 import data.PaymentTable;

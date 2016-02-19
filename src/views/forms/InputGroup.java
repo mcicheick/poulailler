@@ -1,7 +1,7 @@
 /**
  *
  */
-package ui.forms;
+package views.forms;
 
 import javax.swing.*;
 import java.awt.*;

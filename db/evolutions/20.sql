@@ -3,6 +3,14 @@
         drop 
         foreign key FK_5ypfrlu3qo319vc4g3tsq7uk2;
 
+    alter table T_DESPENSES 
+        drop 
+        foreign key FK_hbfd73gxy6xdxjn9bd0dahvsn;
+
+    alter table T_OBSERVATIONS 
+        drop 
+        foreign key FK_hhnx7r1h056cm33s7lftnh9e6;
+
     alter table T_PAYMENTS 
         drop 
         foreign key FK_rlpfj2yl7ye623q4feuao0a66;
@@ -19,6 +27,10 @@
 
     drop table if exists T_CLIENTS;
 
+    drop table if exists T_DESPENSES;
+
+    drop table if exists T_OBSERVATIONS;
+
     drop table if exists T_PAYMENTS;
 
     drop table if exists T_TRANSACTIONS;
@@ -30,9 +42,10 @@
         CREATE_DATE datetime not null,
         MODIFY_DATE datetime not null,
         ARRIVED_DATE datetime not null,
+        DISEASE integer,
         INITIAL_COUNT integer,
+        PRICE double precision,
         REMAIN_COUNT integer,
-        DISEASE INTEGER,
         USER_ID bigint,
         primary key (ID)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -45,6 +58,26 @@
         FIRST_NAME varchar(255),
         LAST_NAME varchar(255),
         PHONE varchar(255) not null,
+        primary key (ID)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    create table T_DESPENSES (
+        ID bigint not null auto_increment,
+        CREATE_DATE datetime not null,
+        MODIFY_DATE datetime not null,
+        AMOUNT double precision,
+        DEPENSE_DATE datetime,
+        DESCRIPTION longtext,
+        bande_ID bigint,
+        primary key (ID)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    create table T_OBSERVATIONS (
+        ID bigint not null auto_increment,
+        CREATE_DATE datetime not null,
+        MODIFY_DATE datetime not null,
+        DESCRIPTION longtext,
+        bande_ID bigint,
         primary key (ID)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -93,6 +126,18 @@
         add constraint FK_5ypfrlu3qo319vc4g3tsq7uk2 
         foreign key (USER_ID) 
         references T_USERS (ID);
+
+    alter table T_DESPENSES 
+        add index FK_hbfd73gxy6xdxjn9bd0dahvsn (bande_ID), 
+        add constraint FK_hbfd73gxy6xdxjn9bd0dahvsn 
+        foreign key (bande_ID) 
+        references T_BANDES (ID);
+
+    alter table T_OBSERVATIONS 
+        add index FK_hhnx7r1h056cm33s7lftnh9e6 (bande_ID), 
+        add constraint FK_hhnx7r1h056cm33s7lftnh9e6 
+        foreign key (bande_ID) 
+        references T_BANDES (ID);
 
     alter table T_PAYMENTS 
         add index FK_rlpfj2yl7ye623q4feuao0a66 (TRANSACTION_ID), 

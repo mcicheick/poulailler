@@ -30,7 +30,7 @@ public class HibernateDDLGenerator {
         }
         schemaExport.setOutputFile(new File(dir, i + ".sql").getPath());
         boolean consolePrint = true;
-        boolean exportInDatabase = true;
+        boolean exportInDatabase = false;
         boolean justDrop = false;
         boolean justCreate = false;
         schemaExport.execute(consolePrint, exportInDatabase, justDrop, justCreate);

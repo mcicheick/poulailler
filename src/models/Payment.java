@@ -15,7 +15,6 @@ public class Payment extends Model implements Serializable {
     private Double amount;
     @Column(name = "PAYMENT_DATE")
     private Date payment_date;
-
     @ManyToOne
     @JoinColumn(name = "TRANSACTION_ID")
     private Transaction transaction;

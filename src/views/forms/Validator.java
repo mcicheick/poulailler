@@ -1,4 +1,4 @@
-package ui.forms;
+package views.forms;
 
 /**
  * Created by sissoko on 12/02/2016.

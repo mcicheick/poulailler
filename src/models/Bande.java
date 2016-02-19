@@ -1,7 +1,5 @@
 package models;
 
-import controllers.BandeController;
-
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,16 +21,30 @@ public class Bande extends Model {
     private Integer initial_count;
     @Column(name = "REMAIN_COUNT")
     private Integer remain_count;
+    @Column(name = "DISEASE")
+    private Integer disease;
+    @Column(name = "PRICE")
+    private Double price;
     @ManyToOne
     @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
     private List<Transaction> transactions;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
+    private List<Observation> observations;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
+    private List<Depense> depenses;
+
     public Bande() {
         super();
-        transactions = new ArrayList<>();
-        arrived_date = new Date();
+        this.transactions = new ArrayList<>();
+        this.arrived_date = new Date();
+        this.initial_count = 0;
+        this.disease = 0;
+        this.remain_count = 0;
+        this.price = 0.0;
     }
 
     public Date getArrived_date() {
@@ -59,6 +71,22 @@ public class Bande extends Model {
         this.remain_count = remain_count;
     }
 
+    public Integer getDisease() {
+        return disease;
+    }
+
+    public void setDisease(Integer disease) {
+        this.disease = disease;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
     public User getUser() {
         return user;
     }
@@ -68,7 +96,7 @@ public class Bande extends Model {
     }
 
     public List<Transaction> getTransactions() {
-        return BandeController.getInstance().select("t from Transaction t where t.bande = ?1", this).getResultList();
+        return transactions;
     }
 
     public void setTransactions(List<Transaction> transactions) {
@@ -81,7 +109,7 @@ public class Bande extends Model {
     }
 
     public void updateQuantity(Double quantity) {
-        if(quantity != null) {
+        if (quantity != null) {
             this.remain_count -= quantity.intValue();
             save();
         }
@@ -94,5 +122,31 @@ public class Bande extends Model {
             sold += transaction.getPaid();
         }
         return sold;
+    }
+
+    public Double getCost() {
+        if(price == null) {
+            price = 0.0;
+        }
+        Double cost = price * initial_count;
+        Double spent = getSpent();
+        return cost + spent;
+    }
+
+    public Double getSpent() {
+        Double spent = 0.0;
+        for (int i = 0; i < depenses.size(); i++) {
+            Depense depense = depenses.get(i);
+            spent += depense.getAmount();
+        }
+        return spent;
+    }
+
+    public List<Depense> getDepenses() {
+        return depenses;
+    }
+
+    public List<Observation> getObservations() {
+        return observations;
     }
 }

@@ -1,8 +1,6 @@
-package ui;
+package views;
 
-import data.BandeTable;
-import data.PaymentTable;
-import data.TransactionTable;
+import data.*;
 import models.*;
 
 import javax.swing.*;
@@ -134,26 +132,39 @@ public class ModelViewer extends JFrame implements ModelListener {
         }
         if(model instanceof Bande) {
             Bande bande = (Bande) model;
-            setTitle("Transactions - " + bande.toString());
-            addHistory(new TransactionView(new TransactionTable(bande.getTransactions())));
+            setTitle(bande.toString());
+            ModelDetailView view = new ModelDetailView();
+            TransactionView transactionView = new TransactionView(new TransactionTable(bande.getTransactions()));
+            view.addModelView("Transactions", transactionView);
+            DepenseView depenseView = new DepenseView(new DepenseTable(bande.getDepenses()));
+            view.addModelView("Depenses", depenseView);
+            ObservationView observationView = new ObservationView(new ObservationTable(bande.getObservations()));
+            view.addModelView("Observations", observationView);
+            view.setModel(model);
+            addHistory(view);
             mainPanel.setViewportView(history.view);
         } else if(model instanceof Transaction) {
             Transaction transaction = (Transaction) model;
             setTitle("Paiements - " + transaction.toString());
-            addHistory(new PaymentView(new PaymentTable(transaction.getPayments())));
+            ModelView view = new PaymentView(new PaymentTable(transaction.getPayments()));
+            view.setModel(model);
+            addHistory(view);
             mainPanel.setViewportView(history.view);
         } else if(model instanceof User) {
             User user = (User) model;
             setTitle("Bandes - " + user.toString());
-            addHistory(new BandeView(new BandeTable(user.getBandes())));
+            ModelView view = new BandeView(new BandeTable(user.getBandes()));
+            view.setModel(model);
+            addHistory(view);
             mainPanel.setViewportView(history.view);
         }  else if(model instanceof Client) {
             Client client = (Client) model;
             setTitle("Transactions - " + client.toString());
-            addHistory(new TransactionView(new TransactionTable(client.getTransactions())));
+            ModelView view = new TransactionView(new TransactionTable(client.getTransactions()));
+            view.setModel(model);
+            addHistory(view);
             mainPanel.setViewportView(history.view);
         }
-        history.view.dataBase.setModel(model);
 
     }
 

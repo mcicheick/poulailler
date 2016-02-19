@@ -1,6 +1,6 @@
-package ui;
+package views;
 
-import data.ClientTable;
+import data.UserTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,21 +10,21 @@ import java.awt.event.WindowEvent;
 /**
  * Created by sissoko on 13/02/2016.
  */
-public class ClientView extends ModelView {
+public class UserView extends ModelView {
 
-    public ClientView() {
-        super(new ClientTable());
+    public UserView() {
+        super(new UserTable());
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Client View");
+        JFrame frame = new JFrame("User View");
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
         });
         frame.setBackground(Color.lightGray);
-        ClientView mainPanel = new ClientView();
+        UserView mainPanel = new UserView();
         frame.getContentPane().add(mainPanel);
         frame.pack();
         frame.setBounds(200, 200, 640, 480);

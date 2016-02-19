@@ -1,0 +1,73 @@
+package data;
+
+import controllers.${Model}Controller;
+import models.${Model};
+
+import java.util.List;
+
+/**
+ * Created by sissoko on 13/02/2016.
+ */
+public class ${Model}Table extends ModelTable {
+
+    public ${Model}Table() {
+        this(${Model}Controller.getInstance().select("b from ${Model} b").getResultList());
+    }
+
+    public ${Model}Table(List models) {
+        super(models);
+        this.columnNames = new String[]{"ID"};
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        ${Model} ${model} = (${Model}) models.get(rowIndex);
+        switch (columnIndex) {
+            case 0:
+                return ${model}.getId();
+        }
+        return null;
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        ${Model} ${model} = (${Model}) models.get(rowIndex);
+        switch (columnIndex) {
+            case 1:
+        }
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return Long.class;
+        }
+        return super.getColumnClass(columnIndex);
+    }
+
+    /**
+     *
+     * @param rowIndex
+     * @return
+     */
+    public ${Model} getRow(int rowIndex) {
+        return (${Model}) super.getRow(rowIndex);
+    }
+
+    public void addRow() {
+        ${Model} ${model} = new ${Model}();
+        //${model}.set__((__) model);
+        models.add(${model});
+    }
+
+    @Override
+    public void update() {
+        this.models = ${Model}Controller.getInstance().select("b from ${Model} b").getResultList();
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return super.isCellEditable(rowIndex, columnIndex);
+    }
+}
