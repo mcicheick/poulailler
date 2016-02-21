@@ -71,6 +71,7 @@ public class PaymentForm extends JPanel {
                 return transactionInputGroup.getValue() == null;
             }
         });
+        transactionField.setSelectedItem(payment.getTransaction());
         add(transactionInputGroup);
         List<Transaction> transactions = ClientController.getInstance().select("b from Transaction b").getResultList();
         this.transactionField.setModel(new DefaultComboBoxModel<Transaction>(new Vector<Transaction>(transactions)));
@@ -86,6 +87,7 @@ public class PaymentForm extends JPanel {
                 return payment_dateInputGroup.getValue() == null;
             }
         });
+        payment_dateField.setValue(payment.getPayment_date());
         add(payment_dateInputGroup);
 
         this.amountLabel = new JLabel(bundle.getString("label.amount"));
@@ -98,6 +100,7 @@ public class PaymentForm extends JPanel {
                 return amountInputGroup.getValue() == null;
             }
         });
+        amountField.setValue(payment.getAmount());
         add(amountInputGroup);
 
 
@@ -187,4 +190,7 @@ public class PaymentForm extends JPanel {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    public JButton getSendButton() {
+        return sendButton;
+    }
 }

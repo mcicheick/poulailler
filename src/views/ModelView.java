@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Created by sissoko on 13/02/2016.
@@ -30,6 +30,8 @@ public abstract class ModelView extends JPanel implements LayoutManager {
     protected JPanel header;
 
     protected JTable table;
+
+    protected JFrame observer;
 
     public ModelView() {
         this(new ModelTable() {
@@ -166,6 +168,7 @@ public abstract class ModelView extends JPanel implements LayoutManager {
         });
 
         newButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 dataBase.addRow();
                 dataBase.setEditable(true);
@@ -297,5 +300,26 @@ public abstract class ModelView extends JPanel implements LayoutManager {
      */
     public void removeModelListener(ModelListener l) {
         this.listenerList.remove(l);
+    }
+
+    public JFrame getObserver() {
+        return observer;
+    }
+
+    public void setObserver(JFrame observer) {
+        this.observer = observer;
+    }
+
+    /**
+     *
+     * @param button
+     * @param al
+     */
+    public static void setActionListener(AbstractButton button, ActionListener al) {
+        ActionListener[] listeners = button.getActionListeners();
+        for(ActionListener alItr : listeners) {
+            button.removeActionListener(alItr);
+        }
+        button.addActionListener(al);
     }
 }

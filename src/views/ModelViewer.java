@@ -2,6 +2,8 @@ package views;
 
 import data.*;
 import models.*;
+import views.forms.DepenseForm;
+import views.forms.ObservationForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -164,8 +166,58 @@ public class ModelViewer extends JFrame implements ModelListener {
             view.setModel(model);
             addHistory(view);
             mainPanel.setViewportView(history.view);
-        }
+        } else if(model instanceof Depense) {
+            final PJDialog dialog = new PJDialog(this);
+            Depense depense = (Depense) model;
+            DepenseForm form = new DepenseForm(depense);
+            dialog.add(form);
+            dialog.setVisible(true);
+            ModelView.setActionListener(form.getSendButton(), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Depense binded = form.getDepense();
+                    if(binded != null) {
+                        binded.save();
+                        dialog.dispose();
+                    } else {
+                        System.out.println("Coucou coucou coucou.");
+                    }
+                }
+            });
 
+            ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dialog.dispose();
+                }
+            });
+        } else if (model instanceof Observation) {
+            final PJDialog dialog = new PJDialog(this);
+            Observation observation = (Observation) model;
+            ObservationForm form = new ObservationForm(observation);
+            dialog.add(form);
+            dialog.setVisible(true);
+            ModelView.setActionListener(form.getSendButton(), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Observation binded = form.getObservation();
+                    if(binded != null) {
+                        binded.save();
+                        dialog.dispose();
+                    } else {
+                        System.out.println("Coucou coucou coucou.");
+                    }
+                }
+            });
+
+            ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dialog.dispose();
+                }
+            });
+        }
+        currentView.setObserver(this);
     }
 
     public static void main(String[] args) {

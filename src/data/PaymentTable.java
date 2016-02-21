@@ -67,6 +67,13 @@ public class PaymentTable extends ModelTable {
         return super.getColumnClass(columnIndex);
     }
 
+    @Override
+    public void update() {
+        if (model != null) {
+            models = PaymentController.getInstance().select("o from Payment o where o.transaction = ?1 order by o.payment_date desc", model).getResultList();
+        }
+    }
+
     /**
      *
      * @param rowIndex

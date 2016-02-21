@@ -101,4 +101,9 @@ public abstract class ModelTable extends AbstractTableModel {
     public void removeRow(Model model) {
         models.remove(model);
     }
+
+    public void addModel(Model model) {
+        models.add(model);
+        fireTableDataChanged();
+    }
 }

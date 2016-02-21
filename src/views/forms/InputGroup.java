@@ -4,19 +4,23 @@
 package views.forms;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.KeyListener;
 
 /**
  * @author sissoko
  */
-public class InputGroup extends JPanel implements InputGroupListener {
-
+public class InputGroup extends JPanel implements InputGroupListener, LayoutManager {
+    protected Dimension origin = new Dimension(0, 0);
+    protected Dimension preferred = origin;
+    protected Dimension minimum = origin;
     /**
      *
      */
     private static final long serialVersionUID = 4989507959985704286L;
-    private JComponent textField;
+    private JComponent component;
+    JScrollPane scrollPane;
 
     private JLabel label;
 
@@ -28,48 +32,38 @@ public class InputGroup extends JPanel implements InputGroupListener {
 
     Validator validator;
 
-    public InputGroup(JLabel label, JComponent textField, JLabel labelError) {
+    public InputGroup(JLabel label, JComponent component, JLabel labelError) {
         this.label = label;
-        this.textField = textField;
+        label.setBackground(Color.blue);
+        this.component = component;
         this.labelError = labelError;
+        this.labelError.setBackground(Color.red);
         labelError.setFont(new Font("Lucida Grande", Font.BOLD, 14));
         labelError.setForeground(Color.RED);
         this.hasError = false;
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{100, 155, 0};
-        gridBagLayout.rowHeights = new int[]{28, 0, 0};
-        gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        setLayout(gridBagLayout);
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.WEST;
-        gbc_label.insets = new Insets(0, 0, 5, 5);
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 0;
-        add(this.label, gbc_label);
-
-        GridBagConstraints gbc_textField = new GridBagConstraints();
-        gbc_textField.insets = new Insets(0, 0, 5, 0);
-        gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_textField.gridx = 1;
-        gbc_textField.gridy = 0;
-        add(this.textField, gbc_textField);
-
-        GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-        gbc_lblNewLabel.anchor = GridBagConstraints.NORTH;
-        gbc_lblNewLabel.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblNewLabel.gridx = 1;
-        gbc_lblNewLabel.gridy = 1;
-        add(this.labelError, gbc_lblNewLabel);
-
+        setLayout(this);
+        add(label);
+        if(component instanceof JTextArea) {
+            scrollPane = new JScrollPane(component);
+            add(scrollPane);
+        } else {
+            add(component);
+        }
+        add(this.labelError);
+        validate(new Validator() {
+            @Override
+            public boolean test() {
+                return getValue() == null;
+            }
+        });
     }
 
     public InputGroup() {
         this(new JLabel(), new JFormattedTextField(), new JLabel());
     }
 
-    public void setTextField(JFormattedTextField textField) {
-        this.textField = textField;
+    public void setComponent(JFormattedTextField component) {
+        this.component = component;
     }
 
     public void setLabel(JLabel label) {
@@ -82,23 +76,23 @@ public class InputGroup extends JPanel implements InputGroupListener {
 
     @Override
     public Object getValue() {
-        if (textField instanceof JFormattedTextField) {
-            return ((JFormattedTextField) textField).getValue();
+        if (component instanceof JFormattedTextField) {
+            return ((JFormattedTextField) component).getValue();
         }
-        if (textField instanceof JComboBox) {
-            return ((JComboBox) textField).getSelectedItem();
+        if (component instanceof JComboBox) {
+            return ((JComboBox<?>) component).getSelectedItem();
         }
-        return ((JTextField) textField).getText();
+        return ((JTextComponent) component).getText();
     }
 
     @Override
     public void setError(String error) {
         if (!("".equals(error) || error == null)) {
             hasError = true;
-            textField.setForeground(Color.red);
+            component.setForeground(Color.red);
         } else {
             hasError = false;
-            textField.setForeground(Color.black);
+            component.setForeground(Color.black);
         }
         lastError = error;
         labelError.setText(error);
@@ -106,7 +100,7 @@ public class InputGroup extends JPanel implements InputGroupListener {
 
     @Override
     public void setKeyListener(KeyListener l) {
-        textField.addKeyListener(l);
+        component.addKeyListener(l);
     }
 
     @Override
@@ -122,4 +116,45 @@ public class InputGroup extends JPanel implements InputGroupListener {
         return false;
     }
 
+    @Override
+    public void addLayoutComponent(String name, Component comp) {
+    }
+
+    @Override
+    public void removeLayoutComponent(Component comp) {
+    }
+
+    @Override
+    public Dimension preferredLayoutSize(Container parent) {
+        return new Dimension(500, 250);
+    }
+
+    @Override
+    public Dimension minimumLayoutSize(Container parent) {
+        return new Dimension(300, 250);
+    }
+
+    @Override
+    public void layoutContainer(Container parent) {
+        Rectangle bound = parent.getBounds();
+        int inset = 4;
+        int x = bound.x;
+        int y = bound.y;
+        int width = bound.width;
+        //int height = bound.height;
+        int labelWidth = (int)(width * 0.2);
+        int inputWidth = (int)(width * 0.8);
+        int labelHeight = 30;
+        label.setBounds(0, 0, labelWidth, labelHeight);
+        if(scrollPane != null) {
+            JTextArea textArea = (JTextArea) component;
+            scrollPane.setBounds(labelWidth, 0, inputWidth - inset, 2 * labelHeight);
+            textArea.setRows(3);
+            labelError.setBounds(labelWidth + inset, 5 * labelHeight, inputWidth - inset, labelHeight);
+        } else {
+            component.setBounds(labelWidth, 0, inputWidth - inset, labelHeight);
+            labelError.setBounds(labelWidth + inset, labelHeight, inputWidth - inset, labelHeight);
+        }
+
+    }
 }

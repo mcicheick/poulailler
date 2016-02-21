@@ -7,24 +7,26 @@ import models.Client;
 import models.Transaction;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by sissoko on 11/02/2016.
  */
 
-public class TransactionForm extends JPanel {
+public class TransactionForm extends BaseForm {
     /**
      *
      */
     private static final long serialVersionUID = 7513192410381964952L;
-    public static final ResourceBundle bundle = ResourceBundle.getBundle("resources/Messages");
     protected Transaction transaction;
 
     protected JLabel transaction_dateLabel;
@@ -77,7 +79,8 @@ public class TransactionForm extends JPanel {
     }
 
     private void init() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(this);
+
         this.bandeLabel = new JLabel(bundle.getString("label.bande"));
         this.bandeField = new JComboBox<Bande>();
         this.bandeLabelError = new JLabel();
@@ -91,7 +94,6 @@ public class TransactionForm extends JPanel {
         add(bandeInputGroup);
         List<Bande> bandes = BandeController.getInstance().select("b from Bande b").getResultList();
         this.bandeField.setModel(new DefaultComboBoxModel<Bande>(new Vector<Bande>(bandes)));
-
         this.bandeField.setSelectedItem(transaction.getBande());
 
         this.clientLabel = new JLabel(bundle.getString("label.client"));
@@ -107,7 +109,6 @@ public class TransactionForm extends JPanel {
         add(clientInputGroup);
         List<Client> clients = ClientController.getInstance().select("b from Client b").getResultList();
         this.clientField.setModel(new DefaultComboBoxModel<Client>(new Vector<Client>(clients)));
-
         this.clientField.setSelectedItem(transaction.getClient());
 
         this.transaction_dateLabel = new JLabel(bundle.getString("label.transaction_date"));
@@ -177,9 +178,8 @@ public class TransactionForm extends JPanel {
 
         sendButton = new JButton(bundle.getString("button.send"));
         add(sendButton);
-
+        add(cancelButton);
         bind();
-
     }
 
     private void bind() {
@@ -295,17 +295,26 @@ public class TransactionForm extends JPanel {
                 }
             }
         });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
     public Transaction getTransaction() {
         if (bandeInputGroup.hasError()) {
             bandeField.grabFocus();
+            bandeInputGroup.setError("Cette valeur est requise.");
             return null;
         }
         transaction.setBande(((Bande) bandeInputGroup.getValue()));
 
         if (clientInputGroup.hasError()) {
             clientField.grabFocus();
+            clientInputGroup.setError("Cette valeur est requise.");
             return null;
         }
         transaction.setClient(((Client) clientInputGroup.getValue()));
@@ -348,12 +357,33 @@ public class TransactionForm extends JPanel {
         return transaction;
     }
 
+    @Override
+    public void layoutContainer(Container parent) {
+        Rectangle bound = parent.getBounds();
+        int inset = 4;
+        int x = bound.x;
+        int y = bound.y;
+        int width = bound.width;
+        int height = bound.height;
+        int buttonWidth = 120;
+        int inputGroupHeight = 60;
+        bandeInputGroup.setBounds(inset, 0, width - inset, inputGroupHeight);
+        clientInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
+        transaction_dateInputGroup.setBounds(inset, 2 * inputGroupHeight, width - inset, inputGroupHeight);
+        unit_priceInputGroup.setBounds(inset, 3 * inputGroupHeight, width - inset, inputGroupHeight);
+        price_by_kiloInputGroup.setBounds(inset, 4 * inputGroupHeight, width - inset, inputGroupHeight);
+        quantityInputGroup.setBounds(inset, 5 * inputGroupHeight, width - inset, inputGroupHeight);
+        weightInputGroup.setBounds(inset, 6 * inputGroupHeight, width - inset, inputGroupHeight);
+
+        sendButton.setBounds(x + width - buttonWidth - 2 * inset, y + height - 45, buttonWidth, 30);
+        cancelButton.setBounds(x + width - (2 * buttonWidth + 2 * inset), y + height - 45, buttonWidth, 30);
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         TransactionForm userForm = new TransactionForm();
         frame.getContentPane().add(userForm);
-        frame.setBounds(200, 200, 500, 350);
+        frame.setBounds(200, 200, 500, 500);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

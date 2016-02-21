@@ -40,6 +40,8 @@ public class Bande extends Model {
     public Bande() {
         super();
         this.transactions = new ArrayList<>();
+        this.observations = new ArrayList<>();
+        this.depenses = new ArrayList<>();
         this.arrived_date = new Date();
         this.initial_count = 0;
         this.disease = 0;

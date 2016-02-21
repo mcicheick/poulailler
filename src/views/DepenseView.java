@@ -2,12 +2,14 @@ package views;
 
 import controllers.BandeController;
 import data.DepenseTable;
-import models.Model;
-import models.Bande;
+import models.*;
+import views.forms.DepenseForm;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
@@ -23,6 +25,38 @@ public class DepenseView extends ModelView {
 
     public DepenseView(DepenseTable dataBase) {
         super(dataBase);
+        setActionListener(newButton, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final PJDialog dialog = new PJDialog(getObserver());
+                Depense depense = new Depense();
+                depense.setBande((Bande)getModel());
+                DepenseForm form = new DepenseForm(depense);
+                dialog.add(form);
+                dialog.setVisible(true);
+                setActionListener(form.getSendButton(), new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Depense binded = form.getDepense();
+                        if(binded != null) {
+                            binded.save();
+                            dialog.dispose();
+                            dataBase.addModel(binded);
+                            dataBase.fireTableDataChanged();
+                        } else {
+                            System.out.println("Coucou coucou coucou.");
+                        }
+                    }
+                });
+
+                setActionListener(form.getCancelButton(), new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                });
+            }
+        });
         render();
     }
 
@@ -32,11 +66,6 @@ public class DepenseView extends ModelView {
         comboBoxBande.setModel(new DefaultComboBoxModel<Bande>(new Vector<Bande>(BandeController.getInstance().select("o from Bande o").getResultList())));
         colorColumnBande.setCellEditor(new DefaultCellEditor(comboBoxBande));
 
-    }
-
-    @Override
-    public void fireModel(Model model) {
-        // Do nothing
     }
 
     public static void main(String[] args) {

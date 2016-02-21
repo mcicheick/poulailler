@@ -79,6 +79,14 @@ public class ModelDetailView extends ModelView implements LayoutManager {
         }
     }
 
+    @Override
+    public void setObserver(JFrame observer) {
+        super.setObserver(observer);
+        for (int i = 0; i < viewList.size(); i++) {
+            viewList.get(i).setObserver(observer);
+        }
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("ModelDetail View");
         frame.addWindowListener(new WindowAdapter() {
