@@ -35,7 +35,6 @@ public class ModelDetailView extends ModelView implements LayoutManager {
 
     @Override
     public void fireEvent(String link) {
-        //super.fireEvent(link);
         if (link != null) {
             if ("Transactions".equalsIgnoreCase(link)) {
                 tabbedPane.setSelectedIndex(0);
