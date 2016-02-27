@@ -25,13 +25,28 @@ public class ModelDetailView extends ModelView implements LayoutManager {
     }
 
     /**
-     *
      * @param title
      * @param view
      */
     public void addModelView(String title, ModelView view) {
         tabbedPane.addTab(title, view);
         viewList.add(view);
+    }
+
+    @Override
+    public void fireEvent(String link) {
+        //super.fireEvent(link);
+        if (link != null) {
+            if ("Transactions".equalsIgnoreCase(link)) {
+                tabbedPane.setSelectedIndex(0);
+            } else if ("Depenses".equalsIgnoreCase(link)) {
+                tabbedPane.setSelectedIndex(1);
+            } else if ("Deaths".equalsIgnoreCase(link)) {
+                tabbedPane.setSelectedIndex(2);
+            } else if ("Observations".equalsIgnoreCase(link)) {
+                tabbedPane.setSelectedIndex(3);
+            }
+        }
     }
 
     @Override

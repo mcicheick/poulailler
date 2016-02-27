@@ -3,6 +3,7 @@ package views;
 import controllers.BandeController;
 import data.ObservationTable;
 import models.Bande;
+import models.Model;
 import models.Observation;
 import views.forms.ObservationForm;
 
@@ -31,7 +32,7 @@ public class ObservationView extends ModelView {
             public void actionPerformed(ActionEvent e) {
                 final PJDialog dialog = new PJDialog(getObserver());
                 Observation observation = new Observation();
-                observation.setBande((Bande)getModel());
+                observation.setBande((Bande) getModel());
                 ObservationForm form = new ObservationForm(observation);
                 dialog.add(form);
                 dialog.setVisible(true);
@@ -39,7 +40,7 @@ public class ObservationView extends ModelView {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Observation binded = form.getObservation();
-                        if(binded != null) {
+                        if (binded != null) {
                             binded.save();
                             dialog.dispose();
                             dataBase.addModel(binded);
@@ -61,11 +62,43 @@ public class ObservationView extends ModelView {
         render();
     }
 
+    @Override
+    public void fireModel(Model model) {
+        final PJDialog dialog = new PJDialog(getObserver());
+        Observation observation = (Observation) model;
+        dialog.setTitle(observation.toString());
+        ObservationForm form = new ObservationForm(observation);
+        dialog.add(form);
+        dialog.setVisible(true);
+        ModelView.setActionListener(form.getSendButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Observation binded = form.getObservation();
+                if (binded != null) {
+                    binded.save();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+    }
+
     private void render() {
         JComboBox<Bande> comboBoxBande = new JComboBox<Bande>();
         TableColumn colorColumnBande = table.getColumn("BANDE");
         comboBoxBande.setModel(new DefaultComboBoxModel<Bande>(new Vector<Bande>(BandeController.getInstance().select("o from Bande o").getResultList())));
         colorColumnBande.setCellEditor(new DefaultCellEditor(comboBoxBande));
+    }
+
+    @Override
+    public void update(Model model) {
+        // super.update(bande);
     }
 
     public static void main(String[] args) {

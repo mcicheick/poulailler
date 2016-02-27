@@ -63,7 +63,15 @@ public class TransactionTable extends ModelTable {
                 transaction.setPrice_by_kilo((Double) aValue);
                 break;
             case 4:
-                transaction.setQuantity((Double) aValue);
+                Bande bande = transaction.getBande();
+                Double quantity = (Double) aValue;
+                if(bande != null) {
+                    int remain = bande.getRemain_count();
+                    if(quantity > remain) {
+                        return;
+                    }
+                }
+                transaction.setQuantity(quantity);
                 break;
             case 5:
                 transaction.setWeight((Double) aValue);
@@ -109,15 +117,15 @@ public class TransactionTable extends ModelTable {
     }
 
     public void addRow() {
-        Transaction bande = new Transaction();
+        Transaction transaction = new Transaction();
         if(model != null) {
             if (model instanceof Client)
-                bande.setClient((Client) model);
+                transaction.setClient((Client) model);
             if(model instanceof Bande) {
-                bande.setBande((Bande) model);
+                transaction.setBande((Bande) model);
             }
         }
-        models.add(bande);
+        models.add(transaction);
         fireTableDataChanged();
     }
 

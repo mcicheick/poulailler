@@ -4,6 +4,7 @@ import controllers.ObservationController;
 import models.Bande;
 import models.Observation;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public class ObservationTable extends ModelTable {
 
     public ObservationTable(List models) {
         super(models);
-        this.columnNames = new String[]{"ID", "DESCRIPTION", "BANDE"};
+        this.columnNames = new String[]{"ID", "DATE OBSERVATION", "DESCRIPTION", "BANDE"};
     }
 
     @Override
@@ -27,8 +28,10 @@ public class ObservationTable extends ModelTable {
             case 0:
                 return observation.getId();
             case 1:
-                return observation.getDescription();
+                return observation.getObservation_date();
             case 2:
+                return observation.getDescription();
+            case 3:
                 return observation.getBande();
         }
         return null;
@@ -39,9 +42,12 @@ public class ObservationTable extends ModelTable {
         Observation observation = (Observation) models.get(rowIndex);
         switch (columnIndex) {
             case 1:
-                observation.setDescription((String) aValue);
+                observation.setObservation_date((Date) aValue);
                 break;
             case 2:
+                observation.setDescription((String) aValue);
+                break;
+            case 3:
                 observation.setBande((Bande) aValue);
                 break;
         }
@@ -53,8 +59,10 @@ public class ObservationTable extends ModelTable {
             case 0:
                 return Long.class;
             case 1:
-                return String.class;
+                return Date.class;
             case 2:
+                return String.class;
+            case 3:
                 return Bande.class;
         }
         return super.getColumnClass(columnIndex);

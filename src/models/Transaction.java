@@ -51,9 +51,6 @@ public class Transaction extends Model {
     @Override
     public <T extends DaoImp> void create() {
         super.create();
-        if(bande != null) {
-            bande.updateQuantity(quantity);
-        }
     }
 
     public Double getCost() {
@@ -133,7 +130,7 @@ public class Transaction extends Model {
     }
 
     public List<Payment> getPayments() {
-        return PaymentController.getInstance().select("p from Payment p where p.transaction = ?1", this).getResultList();
+        return payments;
     }
 
     public void setPayments(List<Payment> payments) {

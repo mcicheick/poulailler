@@ -16,6 +16,7 @@ public class ModelGenerator {
         try {
             generate(args[0], "${Model}", "src/models");
             generate(args[0], "${Model}View", "src/views");
+            generate(args[0], "${Model}Form", "src/views/forms");
             generate(args[0], "${Model}Table", "src/data");
             generate(args[0], "${Model}Controller", "src/controllers");
         } catch (IOException e) {

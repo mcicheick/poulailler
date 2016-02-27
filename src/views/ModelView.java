@@ -2,7 +2,9 @@ package views;
 
 import data.ModelTable;
 import data.TableSorter;
+import models.Bande;
 import models.Model;
+import models.Transaction;
 
 import javax.persistence.PersistenceException;
 import javax.swing.*;
@@ -243,9 +245,23 @@ public abstract class ModelView extends JPanel implements LayoutManager {
         return popupMenu;
     }
 
+    /**
+     *
+     * @param model
+     */
     public void fireModel(Model model) {
         for (int i = 0; i < listenerList.size(); i++) {
             listenerList.get(i).fireModel(model);
+        }
+    }
+
+    /**
+     *
+     * @param link
+     */
+    public void fireEvent(String link) {
+        for (int i = 0; i < listenerList.size(); i++) {
+            listenerList.get(i).fireEvent(link);
         }
     }
 
@@ -282,6 +298,7 @@ public abstract class ModelView extends JPanel implements LayoutManager {
 
     public void setModel(Model model) {
         this.dataBase.setModel(model);
+        update(model);
     }
 
     public Model getModel() {
@@ -321,5 +338,31 @@ public abstract class ModelView extends JPanel implements LayoutManager {
             button.removeActionListener(alItr);
         }
         button.addActionListener(al);
+    }
+
+    /**
+     *
+     * @param model
+     */
+    public void update(Model model) {
+        boolean finished = false;
+        if (model instanceof Bande) {
+            Bande bande = (Bande) model;
+            finished = bande.isFinish();
+        } else if (model instanceof Transaction) {
+            Transaction transaction = (Transaction) model;
+            finished = transaction.getRemainAmount() <= 0;
+        }
+        saveButton.setEnabled(!finished);
+        newButton.setEnabled(!finished);
+        editButton.setEnabled(!finished);
+        deleteButton.setEnabled(!finished);
+    }
+
+    /**
+     *
+     */
+    public void fireTableDataChanged() {
+        // Do what ever
     }
 }

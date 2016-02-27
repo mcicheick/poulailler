@@ -24,6 +24,35 @@ public class ${Model}View extends ModelView {
     private void render() {
     }
 
+    /*
+    @Override
+    public void fireModel(Model model) {
+        final PJDialog dialog = new PJDialog(getObserver());
+        ${Model} ${model} = (${Model}) model;
+        dialog.setTitle(${model}.toString());
+        ${Model}Form form = new ${Model}Form(${model});
+        dialog.add(form);
+        dialog.setVisible(true);
+        ModelView.setActionListener(form.getSendButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ${Model} binded = form.get${Model}();
+                if(binded != null) {
+                    binded.save();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+    }
+    */
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("${Model} View");
         frame.addWindowListener(new WindowAdapter() {

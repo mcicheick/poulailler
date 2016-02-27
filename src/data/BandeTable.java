@@ -57,15 +57,16 @@ public class BandeTable extends ModelTable {
                 break;
             case 3:
                 bande.setInitial_count((Integer) aValue);
-                if(bande.getId() == null) {
-                    bande.setRemain_count((Integer) aValue);
-                }
+//                if(bande.getId() == null) {
+//                    bande.setRemain_count((Integer) aValue);
+//                }
                 break;
             case 5:
-                bande.setRemain_count((Integer) aValue);
+                //bande.setRemain_count((Integer) aValue);
                 break;
             case 6:
                 bande.setUser((User) aValue);
+                break;
         }
     }
 
@@ -89,7 +90,6 @@ public class BandeTable extends ModelTable {
     }
 
     /**
-     *
      * @param rowIndex
      * @return
      */

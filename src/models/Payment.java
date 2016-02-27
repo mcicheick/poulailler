@@ -47,4 +47,9 @@ public class Payment extends Model implements Serializable {
     public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Payment[%d] - %.2f", getId(), getAmount());
+    }
 }

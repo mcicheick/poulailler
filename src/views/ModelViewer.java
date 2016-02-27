@@ -2,8 +2,6 @@ package views;
 
 import data.*;
 import models.*;
-import views.forms.DepenseForm;
-import views.forms.ObservationForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +12,11 @@ import java.awt.event.*;
  */
 public class ModelViewer extends JFrame implements ModelListener {
 
-    protected JScrollPane mainPanel;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9096563933302280082L;
+	protected JScrollPane mainPanel;
     protected ModelView currentView;
     protected JButton retour;
     protected JMenuBar menuBar;
@@ -24,6 +26,9 @@ public class ModelViewer extends JFrame implements ModelListener {
     private static class History {
         ModelView view;
         History prev;
+        public void clear() {
+            prev = null;
+        }
     }
 
     History history;
@@ -38,7 +43,7 @@ public class ModelViewer extends JFrame implements ModelListener {
             }
         });
         setBackground(Color.lightGray);
-        currentView = new BandeView();
+        currentView = new Dashboard();
         currentView.addModelListener(this);
         history.view = currentView;
         setTitle("Les bandes");
@@ -56,7 +61,8 @@ public class ModelViewer extends JFrame implements ModelListener {
                     if(prev.view.dataBase.getModel() != null) {
                         setTitle(prev.view.dataBase.getModel().toString());
                     }
-                    prev.view.dataBase.fireTableChanged(null);
+                    currentView.dataBase.fireTableDataChanged();
+                    //prev.view.dataBase.fireTableChanged(null);
                     history = prev;
                 }
             }
@@ -82,6 +88,19 @@ public class ModelViewer extends JFrame implements ModelListener {
             }
         });
         toolBar.add(client);
+
+        JButton home = new JButton("Home");
+        home.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = new Dashboard();
+                addHistory(view);
+                history.clear();
+                mainPanel.setViewportView(history.view);
+            }
+        });
+        toolBar.add(home, 0);
+
         getContentPane().add(BorderLayout.NORTH, toolBar);
 
         setMenuBar();
@@ -136,89 +155,54 @@ public class ModelViewer extends JFrame implements ModelListener {
             Bande bande = (Bande) model;
             setTitle(bande.toString());
             ModelDetailView view = new ModelDetailView();
+
             TransactionView transactionView = new TransactionView(new TransactionTable(bande.getTransactions()));
             view.addModelView("Transactions", transactionView);
+
             DepenseView depenseView = new DepenseView(new DepenseTable(bande.getDepenses()));
             view.addModelView("Depenses", depenseView);
+
+            DeathView deathView = new DeathView(new DeathTable(bande.getDeaths()));
+            view.addModelView("Deaths", deathView);
+
             ObservationView observationView = new ObservationView(new ObservationTable(bande.getObservations()));
             view.addModelView("Observations", observationView);
+            
             view.setModel(model);
             addHistory(view);
-            mainPanel.setViewportView(history.view);
+            mainPanel.setViewportView(currentView);
         } else if(model instanceof Transaction) {
             Transaction transaction = (Transaction) model;
             setTitle("Paiements - " + transaction.toString());
             ModelView view = new PaymentView(new PaymentTable(transaction.getPayments()));
             view.setModel(model);
             addHistory(view);
-            mainPanel.setViewportView(history.view);
+            mainPanel.setViewportView(currentView);
         } else if(model instanceof User) {
             User user = (User) model;
             setTitle("Bandes - " + user.toString());
             ModelView view = new BandeView(new BandeTable(user.getBandes()));
             view.setModel(model);
             addHistory(view);
-            mainPanel.setViewportView(history.view);
+            mainPanel.setViewportView(currentView);
         }  else if(model instanceof Client) {
             Client client = (Client) model;
             setTitle("Transactions - " + client.toString());
             ModelView view = new TransactionView(new TransactionTable(client.getTransactions()));
             view.setModel(model);
             addHistory(view);
-            mainPanel.setViewportView(history.view);
-        } else if(model instanceof Depense) {
-            final PJDialog dialog = new PJDialog(this);
-            Depense depense = (Depense) model;
-            DepenseForm form = new DepenseForm(depense);
-            dialog.add(form);
-            dialog.setVisible(true);
-            ModelView.setActionListener(form.getSendButton(), new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Depense binded = form.getDepense();
-                    if(binded != null) {
-                        binded.save();
-                        dialog.dispose();
-                    } else {
-                        System.out.println("Coucou coucou coucou.");
-                    }
-                }
-            });
-
-            ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dialog.dispose();
-                }
-            });
-        } else if (model instanceof Observation) {
-            final PJDialog dialog = new PJDialog(this);
-            Observation observation = (Observation) model;
-            ObservationForm form = new ObservationForm(observation);
-            dialog.add(form);
-            dialog.setVisible(true);
-            ModelView.setActionListener(form.getSendButton(), new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Observation binded = form.getObservation();
-                    if(binded != null) {
-                        binded.save();
-                        dialog.dispose();
-                    } else {
-                        System.out.println("Coucou coucou coucou.");
-                    }
-                }
-            });
-
-            ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dialog.dispose();
-                }
-            });
+            mainPanel.setViewportView(currentView);
         }
         currentView.setObserver(this);
     }
+
+    @Override
+    public void fireEvent(String link) {
+        if(currentView != null) {
+            currentView.fireEvent(link);
+        }
+    }
+
 
     public static void main(String[] args) {
         try {
@@ -229,7 +213,7 @@ public class ModelViewer extends JFrame implements ModelListener {
         }
         ModelViewer frame = new ModelViewer();
         frame.pack();
-        frame.setBounds(200, 200, 940, 480);
+        frame.setBounds(200, 200, 1000, 480);
         frame.setVisible(true);
     }
 }

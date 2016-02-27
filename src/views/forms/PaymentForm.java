@@ -5,6 +5,7 @@ import models.Payment;
 import models.Transaction;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -20,7 +21,7 @@ import java.util.Vector;
  * Created by sissoko on 11/02/2016.
  */
 
-public class PaymentForm extends JPanel {
+public class PaymentForm extends BaseForm {
     /**
      *
      */
@@ -55,22 +56,17 @@ public class PaymentForm extends JPanel {
      */
     public PaymentForm(Payment payment) {
         this.payment = payment;
+        setLayout(this);
         init();
+        bind();
     }
 
     private void init() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.transactionLabel = new JLabel(bundle.getString("label.transaction"));
         this.transactionField = new JComboBox<Transaction>();
         this.transactionLabelError = new JLabel();
         this.transactionInputGroup = new InputGroup(transactionLabel, transactionField, transactionLabelError);
-        transactionInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return transactionInputGroup.getValue() == null;
-            }
-        });
         transactionField.setSelectedItem(payment.getTransaction());
         add(transactionInputGroup);
         List<Transaction> transactions = ClientController.getInstance().select("b from Transaction b").getResultList();
@@ -81,12 +77,6 @@ public class PaymentForm extends JPanel {
         this.payment_dateField = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
         this.payment_dateLabelError = new JLabel();
         this.payment_dateInputGroup = new InputGroup(payment_dateLabel, payment_dateField, payment_dateLabelError);
-        payment_dateInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return payment_dateInputGroup.getValue() == null;
-            }
-        });
         payment_dateField.setValue(payment.getPayment_date());
         add(payment_dateInputGroup);
 
@@ -94,25 +84,17 @@ public class PaymentForm extends JPanel {
         this.amountField = new JFormattedTextField(new DecimalFormat("#.##"));
         this.amountLabelError = new JLabel();
         this.amountInputGroup = new InputGroup(amountLabel, amountField, amountLabelError);
-        amountInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return amountInputGroup.getValue() == null;
-            }
-        });
         amountField.setValue(payment.getAmount());
         add(amountInputGroup);
 
-
-
         sendButton = new JButton(bundle.getString("button.send"));
+        cancelButton = new JButton(bundle.getString("button.cancel"));
         add(sendButton);
-
-        bind();
-
+        add(cancelButton);
     }
 
     private void bind() {
+
         payment_dateInputGroup.setKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -142,13 +124,11 @@ public class PaymentForm extends JPanel {
             }
         });
 
-
-
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Payment binded = getPayment();
-                if(binded != null) {
+                if (binded != null) {
                     binded.save();
                 }
             }
@@ -158,18 +138,20 @@ public class PaymentForm extends JPanel {
     public Payment getPayment() {
 
         if (transactionInputGroup.hasError()) {
+            transactionInputGroup.setError("Transaction est requise.");
             transactionField.grabFocus();
             return null;
         }
+        transactionInputGroup.setError("");
         payment.setTransaction((Transaction) transactionInputGroup.getValue());
-        
+
         if (payment_dateInputGroup.hasError()) {
             payment_dateField.grabFocus();
             payment_dateInputGroup.setError(PaymentForm.bundle.getString("error.payment_date"));
             return null;
         }
         payment.setPayment_date((Date) payment_dateInputGroup.getValue());
-        
+
         if (amountInputGroup.hasError()) {
             amountField.grabFocus();
             amountInputGroup.setError(PaymentForm.bundle.getString("error.amount"));
@@ -192,5 +174,23 @@ public class PaymentForm extends JPanel {
 
     public JButton getSendButton() {
         return sendButton;
+    }
+
+    @Override
+    public void layoutContainer(Container parent) {
+        Rectangle bound = parent.getBounds();
+        int inset = 4;
+        int x = bound.x;
+        int y = bound.y;
+        int width = bound.width;
+        int height = bound.height;
+        int buttonWidth = 120;
+        int inputGroupHeight = 60;
+        transactionInputGroup.setBounds(inset, 0, width - inset, inputGroupHeight);
+        payment_dateInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
+        amountInputGroup.setBounds(inset, 2 * inputGroupHeight, width - inset, inputGroupHeight);
+
+        sendButton.setBounds(x + width - buttonWidth - 2 * inset, y + height - 45, buttonWidth, 30);
+        cancelButton.setBounds(x + width - (2 * buttonWidth + 2 * inset), y + height - 45, buttonWidth, 30);
     }
 }

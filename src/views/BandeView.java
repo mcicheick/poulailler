@@ -15,6 +15,7 @@ import java.util.Vector;
  * Created by sissoko on 13/02/2016.
  */
 public class BandeView extends ModelView {
+    JLabel soldLabel;
 
     public BandeView() {
         this(new BandeTable());
@@ -22,10 +23,12 @@ public class BandeView extends ModelView {
 
     public BandeView(BandeTable dataBase) {
         super(dataBase);
-        render();
-        JLabel soldLabel = new JLabel();
+        dataBase.setOwner(this);
+        soldLabel = new JLabel();
         header.add(soldLabel, 0);
         soldLabel.setText(String.format("Total vendu : %.2f", dataBase.totalSold()));
+
+        render();
     }
 
     private void render() {
@@ -34,6 +37,11 @@ public class BandeView extends ModelView {
         comboBoxUser.setModel(new DefaultComboBoxModel<User>(new Vector<User>(UserController.getInstance().select("o from User o").getResultList())));
         colorColumnUser.setCellEditor(new DefaultCellEditor(comboBoxUser));
 
+    }
+
+    @Override
+    public void fireTableDataChanged() {
+        soldLabel.setText(String.format("Total vendu : %.2f", ((BandeTable)dataBase).totalSold()));
     }
 
     public static void main(String[] args) {

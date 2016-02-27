@@ -13,6 +13,7 @@ public class Depense extends Model {
     private Bande bande;
     @Column(name = "AMOUNT")
     private Double amount;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DEPENSE_DATE")
     private Date depense_date;
     @Column(name = "DESCRIPTION")
@@ -55,5 +56,11 @@ public class Depense extends Model {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("Dépense[%d] - %.2f", getId(), amount);
     }
 }

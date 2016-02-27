@@ -1,6 +1,7 @@
 package data;
 
 import models.Model;
+import views.ModelView;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
@@ -18,6 +19,8 @@ public abstract class ModelTable extends AbstractTableModel {
     protected boolean editable = false;
 
     protected Model model;
+
+    protected ModelView owner;
 
     public ModelTable() {
         this(new ArrayList<>());
@@ -55,6 +58,14 @@ public abstract class ModelTable extends AbstractTableModel {
             update();
         }
         super.fireTableChanged(e);
+    }
+
+    @Override
+    public void fireTableDataChanged() {
+        if(owner != null) {
+            owner.fireTableDataChanged();
+        }
+        super.fireTableDataChanged();
     }
 
     /**
@@ -105,5 +116,13 @@ public abstract class ModelTable extends AbstractTableModel {
     public void addModel(Model model) {
         models.add(model);
         fireTableDataChanged();
+    }
+
+    /**
+     *
+     * @param owner
+     */
+    public void setOwner(ModelView owner) {
+        this.owner = owner;
     }
 }

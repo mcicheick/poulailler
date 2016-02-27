@@ -77,6 +77,6 @@ public class User extends Model {
 
     @Override
     public String toString() {
-        return email;
+        return String.format("%s %s", first_name, last_name);
     }
 }

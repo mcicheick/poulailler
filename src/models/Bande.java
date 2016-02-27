@@ -19,15 +19,12 @@ public class Bande extends Model {
     private Date arrived_date;
     @Column(name = "INITIAL_COUNT")
     private Integer initial_count;
-    @Column(name = "REMAIN_COUNT")
-    private Integer remain_count;
-    @Column(name = "DISEASE")
-    private Integer disease;
     @Column(name = "PRICE")
     private Double price;
     @ManyToOne
     @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User user;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
     private List<Transaction> transactions;
 
@@ -37,15 +34,17 @@ public class Bande extends Model {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
     private List<Depense> depenses;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
+    private List<Death> deaths;
+
     public Bande() {
         super();
         this.transactions = new ArrayList<>();
         this.observations = new ArrayList<>();
         this.depenses = new ArrayList<>();
+        this.deaths = new ArrayList<>();
         this.arrived_date = new Date();
         this.initial_count = 0;
-        this.disease = 0;
-        this.remain_count = 0;
         this.price = 0.0;
     }
 
@@ -66,19 +65,21 @@ public class Bande extends Model {
     }
 
     public Integer getRemain_count() {
-        return remain_count;
+        int remain_count = initial_count;
+        for (int i = 0; i < transactions.size(); i++) {
+            Transaction transaction = transactions.get(i);
+            remain_count -= transaction.getQuantity();
+        }
+        return remain_count - getDeath();
     }
 
-    public void setRemain_count(Integer remain_count) {
-        this.remain_count = remain_count;
-    }
-
-    public Integer getDisease() {
-        return disease;
-    }
-
-    public void setDisease(Integer disease) {
-        this.disease = disease;
+    public Integer getDeath() {
+        Integer death_count = 0;
+        for (int i = 0; i < deaths.size(); i++) {
+            Death death = deaths.get(i);
+            death_count += death.getDeath_count();
+        }
+        return death_count;
     }
 
     public Double getPrice() {
@@ -110,13 +111,6 @@ public class Bande extends Model {
         return String.format("Bande[%d] du %s", getId(), new SimpleDateFormat("dd/MM/yyyy").format(arrived_date));
     }
 
-    public void updateQuantity(Double quantity) {
-        if (quantity != null) {
-            this.remain_count -= quantity.intValue();
-            save();
-        }
-    }
-
     public Double getSold() {
         Double sold = 0.0;
         for (int i = 0; i < transactions.size(); i++) {
@@ -126,13 +120,21 @@ public class Bande extends Model {
         return sold;
     }
 
-    public Double getCost() {
+    public Double getBenefit() {
+        return getSold() - getCost();
+    }
+
+    public Double getFixedCost() {
         if(price == null) {
             price = 0.0;
         }
         Double cost = price * initial_count;
+        return cost;
+    }
+
+    public Double getCost() {
         Double spent = getSpent();
-        return cost + spent;
+        return getFixedCost() + spent;
     }
 
     public Double getSpent() {
@@ -149,6 +151,17 @@ public class Bande extends Model {
     }
 
     public List<Observation> getObservations() {
+        if (observations == null) {
+            observations = new ArrayList<>();
+        }
         return observations;
+    }
+
+    public List<Death> getDeaths() {
+        return deaths;
+    }
+
+    public boolean isFinish() {
+        return getRemain_count() <= 0;
     }
 }

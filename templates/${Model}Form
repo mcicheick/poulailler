@@ -2,7 +2,7 @@ package views.forms;
 
 import controllers.BandeController;
 import models.Bande;
-import models.Observation;
+import models.${Model};
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,44 +14,41 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 /**
- * Created by sissoko on 20/02/2016.
+ * Created by sissoko on ${date}.
  */
-public class ObservationForm extends BaseForm implements LayoutManager {
-
+public class ${Model}Form extends BaseForm implements LayoutManager {
+    /*
     protected JLabel bandeLabel;
     protected JComboBox<Bande> bandeField;
     protected JLabel bandeLabelError;
     protected InputGroup bandeInputGroup;
-    
-    protected JLabel observation_dateLabel;
-    protected JFormattedTextField observation_dateField;
-    protected JLabel observation_dateLabelError;
-    protected InputGroup observation_dateInputGroup;
 
-    protected JLabel descriptionLabel;
-    protected JTextArea descriptionField;
-    protected JLabel descriptionLabelError;
-    protected InputGroup descriptionInputGroup;
+    protected JLabel ${model}_dateLabel;
+    protected JFormattedTextField ${model}_dateField;
+    protected JLabel ${model}_dateLabelError;
+    protected InputGroup ${model}_dateInputGroup;
+    */
 
-    private Observation observation;
+    private ${Model} ${model};
 
-    public ObservationForm() {
-        this(new Observation());
+    public ${Model}Form() {
+        this(new ${Model}());
     }
 
     /**
      *
-     * @param observation
+     * @param ${model}
      */
-    public ObservationForm(Observation observation) {
+    public ${Model}Form(${Model} ${model}) {
         super();
-        this.observation = observation;
+        this.${model} = ${model};
         setLayout(this);
         init();
         bind();
     }
 
     private void init() {
+        /*
         this.bandeLabel = new JLabel(bundle.getString("label.bande"));
         this.bandeField = new JComboBox<Bande>();
         this.bandeLabelError = new JLabel();
@@ -59,32 +56,43 @@ public class ObservationForm extends BaseForm implements LayoutManager {
         add(bandeInputGroup);
         java.util.List<Bande> bandes = BandeController.getInstance().select("b from Bande b").getResultList();
         this.bandeField.setModel(new DefaultComboBoxModel<Bande>(new Vector<Bande>(bandes)));
-        this.bandeField.setSelectedItem(observation.getBande());
+        this.bandeField.setSelectedItem(${model}.getBande());
 
-        this.observation_dateLabel = new JLabel("Date observation");
-        this.observation_dateField = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
-        this.observation_dateLabelError = new JLabel();
-        this.observation_dateInputGroup = new InputGroup(observation_dateLabel, observation_dateField, observation_dateLabelError);
-        add(observation_dateInputGroup);
-        this.observation_dateField.setValue(observation.getObservation_date());
+        this.${model}_dateLabel = new JLabel("Date ${model}");
+        this.${model}_dateField = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
+        this.${model}_dateLabelError = new JLabel();
+        this.${model}_dateInputGroup = new InputGroup(${model}_dateLabel, ${model}_dateField, ${model}_dateLabelError);
+        add(${model}_dateInputGroup);
+        this.${model}_dateField.setValue(${model}.get${Model}_date());
+        */
 
-        this.descriptionLabel = new JLabel("Description");
-        this.descriptionField = new JTextArea();
-        this.descriptionField.setRows(5);
-        this.descriptionLabelError = new JLabel();
-        this.descriptionInputGroup = new InputGroup(descriptionLabel, descriptionField, descriptionLabelError);
-        add(descriptionInputGroup);
-        this.descriptionField.setText(observation.getDescription());
         add(sendButton);
         add(cancelButton);
     }
 
     private void bind() {
 
+        /**
+        death_dateInputGroup.setKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (death_dateInputGroup.hasError()) {
+                        death_dateInputGroup.setError("La date est incorrecte");
+                    } else {
+                        death_dateInputGroup.setError("");
+                        amountField.grabFocus();
+                    }
+                }
+            }
+        });
+        */
+
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Observation binded = getObservation();
+                ${Model} binded = get${Model}();
                 if(binded != null) {
                     binded.save();
                 }
@@ -110,37 +118,46 @@ public class ObservationForm extends BaseForm implements LayoutManager {
         int height = bound.height;
         int buttonWidth = 120;
         int inputGroupHeight = 60;
+        /*
         bandeInputGroup.setBounds(inset, 0, width - inset, inputGroupHeight);
-        observation_dateInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
-        descriptionInputGroup.setBounds(inset, 2 * inputGroupHeight, width - inset, inputGroupHeight);
+        ${model}_dateInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
+        */
 
         sendButton.setBounds(x + width - buttonWidth - 2 * inset, y + height - 45, buttonWidth, 30);
         cancelButton.setBounds(x + width - (2 * buttonWidth + 2 * inset), y + height - 45, buttonWidth, 30);
     }
 
-    public Observation getObservation() {
+    public ${Model} get${Model}() {
+        /*
         if (bandeInputGroup.hasError()) {
             bandeField.grabFocus();
             bandeInputGroup.setError("Cette valeur est requise.");
             return null;
         }
         bandeInputGroup.setError("");
-        observation.setBande(((Bande) bandeInputGroup.getValue()));
+        ${model}.setBande(((Bande) bandeInputGroup.getValue()));
+        
+        if (${model}_dateInputGroup.hasError()) {
+            ${model}_dateField.grabFocus();
+            ${model}_dateInputGroup.setError("La date est incorrecte.");
+            return null;
+        }
+        ${model}_dateInputGroup.setError("");
+        ${model}.setDepense_date((Date) ${model}_dateInputGroup.getValue());
+        */
 
-        observation.setDescription((String) descriptionInputGroup.getValue());
-
-        return observation;
+        return ${model};
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Observation View");
+        JFrame frame = new JFrame("${Model} View");
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
         });
         frame.setBackground(Color.lightGray);
-        ObservationForm mainPanel = new ObservationForm();
+        ${Model}Form mainPanel = new ${Model}Form();
         frame.getContentPane().add(mainPanel);
         frame.pack();
         frame.setBounds(200, 200, 640, 480);

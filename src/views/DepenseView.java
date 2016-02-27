@@ -43,8 +43,6 @@ public class DepenseView extends ModelView {
                             dialog.dispose();
                             dataBase.addModel(binded);
                             dataBase.fireTableDataChanged();
-                        } else {
-                            System.out.println("Coucou coucou coucou.");
                         }
                     }
                 });
@@ -66,6 +64,33 @@ public class DepenseView extends ModelView {
         comboBoxBande.setModel(new DefaultComboBoxModel<Bande>(new Vector<Bande>(BandeController.getInstance().select("o from Bande o").getResultList())));
         colorColumnBande.setCellEditor(new DefaultCellEditor(comboBoxBande));
 
+    }
+
+    @Override
+    public void fireModel(Model model) {
+        final PJDialog dialog = new PJDialog(getObserver());
+        Depense depense = (Depense) model;
+        dialog.setTitle(depense.toString());
+        DepenseForm form = new DepenseForm(depense);
+        dialog.add(form);
+        dialog.setVisible(true);
+        ModelView.setActionListener(form.getSendButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Depense binded = form.getDepense();
+                if(binded != null) {
+                    binded.save();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
     }
 
     public static void main(String[] args) {

@@ -48,10 +48,45 @@ public class PaymentView extends ModelView {
                         }
                     }
                 });
+
+                setActionListener(form.getCancelButton(), new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                });
             }
         });
 
+
         render();
+    }
+
+    @Override
+    public void fireModel(Model model) {
+        final PJDialog dialog = new PJDialog(getObserver());
+        Payment payment = (Payment) model;
+        dialog.setTitle(payment.toString());
+        PaymentForm form = new PaymentForm(payment);
+        dialog.add(form);
+        dialog.setVisible(true);
+        ModelView.setActionListener(form.getSendButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Payment binded = form.getPayment();
+                if(binded != null) {
+                    binded.save();
+                    dialog.dispose();
+                }
+            }
+        });
+
+        ModelView.setActionListener(form.getCancelButton(), new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
     }
 
     private void render() {
@@ -59,12 +94,6 @@ public class PaymentView extends ModelView {
         TableColumn colorColumnTransaction = table.getColumn("TRANSACTION");
         comboBoxTransaction.setModel(new DefaultComboBoxModel<Transaction>(new Vector<Transaction>(TransactionController.getInstance().select("o from Transaction o").getResultList())));
         colorColumnTransaction.setCellEditor(new DefaultCellEditor(comboBoxTransaction));
-
-    }
-
-    @Override
-    public void fireModel(Model model) {
-        // Do nothing
     }
 
     public static void main(String[] args) {
