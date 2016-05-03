@@ -3,6 +3,7 @@ package views.forms;
 import models.Client;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -13,7 +14,7 @@ import java.util.ResourceBundle;
  * Created by sissoko on 11/02/2016.
  */
 
-public class ClientForm extends JPanel {
+public class ClientForm extends BaseForm {
     /**
      *
      */
@@ -42,8 +43,6 @@ public class ClientForm extends JPanel {
     protected JLabel addressLabel;
     protected InputGroup addressInputGroup;
 
-    protected JButton sendButton;
-
     public ClientForm() {
         this(new Client());
     }
@@ -53,11 +52,11 @@ public class ClientForm extends JPanel {
      */
     public ClientForm(Client client) {
         this.client = client;
+        setLayout(this);
         init();
     }
 
     private void init() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.firstNameLabel = new JLabel(bundle.getString("label.first_name"));
         this.firstNameField = new JTextField();
@@ -104,9 +103,9 @@ public class ClientForm extends JPanel {
         this.addressInputGroup = new InputGroup(addressLabel, addressField, addressLabelError);
         add(addressInputGroup);
 
-        sendButton = new JButton(bundle.getString("button.send"));
         add(sendButton);
 
+        add(cancelButton);
         bind();
 
     }
@@ -232,6 +231,24 @@ public class ClientForm extends JPanel {
         return client;
     }
 
+    @Override
+    public void layoutContainer(Container parent) {
+        Rectangle bound = parent.getBounds();
+        int inset = 4;
+        int x = bound.x;
+        int y = bound.y;
+        int width = bound.width;
+        int height = bound.height;
+        int buttonWidth = 120;
+        int inputGroupHeight = 60;
+        firstNameInputGroup.setBounds(inset, 0, width - inset, inputGroupHeight);
+        lastNameInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
+        phoneInputGroup.setBounds(inset, 2 * inputGroupHeight, width - inset, inputGroupHeight);
+        addressInputGroup.setBounds(inset, 3 * inputGroupHeight, width - inset, inputGroupHeight);
+
+        sendButton.setBounds(x + width - buttonWidth - 2 * inset, y + height - 45, buttonWidth, 30);
+        cancelButton.setBounds(x + width - (2 * buttonWidth + 2 * inset), y + height - 45, buttonWidth, 30);
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
@@ -241,5 +258,4 @@ public class ClientForm extends JPanel {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
-
 }

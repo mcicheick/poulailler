@@ -3,6 +3,7 @@ package models;
 import controllers.PaymentController;
 
 import javax.persistence.*;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Created by sissoko on 11/02/2016.
  */
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "T_TRANSACTIONS")
 public class Transaction extends Model {
@@ -69,14 +71,26 @@ public class Transaction extends Model {
         return paid;
     }
 
+    /**
+     * 
+     * @return
+     */
     public Double getRemainAmount() {
         return getCost() - getPaid();
     }
 
+    /**
+     * 
+     * @return
+     */
     public Date getTransaction_date() {
         return transaction_date;
     }
 
+    /**
+     * 
+     * @param transaction_date
+     */
     public void setTransaction_date(Date transaction_date) {
         this.transaction_date = transaction_date;
     }
@@ -85,6 +99,10 @@ public class Transaction extends Model {
         return unit_price;
     }
 
+    /**
+     * 
+     * @param unit_price
+     */
     public void setUnit_price(Double unit_price) {
         this.unit_price = unit_price;
     }
@@ -93,14 +111,26 @@ public class Transaction extends Model {
         return price_by_kilo;
     }
 
+    /**
+     * 
+     * @param price_by_kilo
+     */
     public void setPrice_by_kilo(Double price_by_kilo) {
         this.price_by_kilo = price_by_kilo;
     }
 
+    /**
+     * 
+     * @return
+     */
     public Double getQuantity() {
         return quantity;
     }
 
+    /**
+     * 
+     * @param quantity
+     */
     public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
@@ -109,6 +139,10 @@ public class Transaction extends Model {
         return weight;
     }
 
+    /**
+     * 
+     * @param weight
+     */
     public void setWeight(Double weight) {
         this.weight = weight;
     }
@@ -117,6 +151,10 @@ public class Transaction extends Model {
         return bande;
     }
 
+    /**
+     * 
+     * @param bande
+     */
     public void setBande(Bande bande) {
         this.bande = bande;
     }
@@ -125,6 +163,10 @@ public class Transaction extends Model {
         return client;
     }
 
+    /**
+     * 
+     * @param client
+     */
     public void setClient(Client client) {
         this.client = client;
     }
@@ -133,6 +175,10 @@ public class Transaction extends Model {
         return payments;
     }
 
+    /**
+     * 
+     * @param payments
+     */
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
     }

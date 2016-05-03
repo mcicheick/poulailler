@@ -22,9 +22,9 @@ public class User extends Model {
     private String first_name;
     @Column(name = "LAST_NAME")
     private String last_name;
-    @Column(name = "EMAIL", nullable = false, unique = true)
-    @Index(name = "EMAILS_INDEXES")
-    private String email;
+    @Column(name = "TELEPHONE", nullable = false, unique = true)
+    @Index(name = "TELEPHONES_INDEXES")
+    private String telephone;
     @Column(name = "PASSWORD")
     private String password;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -51,12 +51,12 @@ public class User extends Model {
         this.last_name = last_name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     public String getPassword() {

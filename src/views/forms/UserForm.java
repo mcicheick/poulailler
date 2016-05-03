@@ -5,6 +5,8 @@ import models.User;
 import tools.BCrypt;
 
 import javax.swing.*;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -15,7 +17,7 @@ import java.util.ResourceBundle;
  * Created by sissoko on 11/02/2016.
  */
 
-public class UserForm extends JPanel {
+public class UserForm extends BaseForm {
     /**
      *
      */
@@ -23,30 +25,29 @@ public class UserForm extends JPanel {
     static final String PASSWORD_REGEX = "[a-zA-Z0-9]{5,}";
     static String EMAIL_REGEX = "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*"
             + "[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?";
+    static final String PHONE_REGEX = "\\+?[0-9]{8,11}";
     public static final ResourceBundle userBundle = ResourceBundle.getBundle("resources/Messages");
     protected User user;
 
     protected JLabel firstNameLabel;
     protected JLabel lastNameLabel;
-    protected JLabel emailLabel;
+    protected JLabel phoneLabel;
     protected JLabel passwordLabel;
 
     protected JTextField firstNameField;
     protected JTextField lastNameField;
-    protected JTextField emailField;
+    protected JTextField phoneField;
     protected JPasswordField passwordField;
 
     protected JLabel firstNameLabelError;
     protected JLabel lastNameLabelError;
-    protected JLabel emailLabelError;
+    protected JLabel phoneLabelError;
     protected JLabel passwordLabelError;
 
     protected InputGroup firstNameInputGroup;
     protected InputGroup lastNameInputGroup;
-    protected InputGroup emailInputGroup;
+    protected InputGroup phoneInputGroup;
     protected InputGroup passwordInputGroup;
-
-    protected JButton sendButton;
 
     public UserForm() {
         this(new User());
@@ -57,6 +58,7 @@ public class UserForm extends JPanel {
      */
     public UserForm(User user) {
         this.user = user;
+        setLayout(this);
         init();
     }
 
@@ -69,15 +71,14 @@ public class UserForm extends JPanel {
         this.lastNameField = new JTextField();
         this.lastNameLabelError = new JLabel();
 
-        this.emailLabel = new JLabel(userBundle.getString("label.email"));
-        this.emailField = new JTextField();
-        this.emailLabelError = new JLabel();
+        this.phoneLabel = new JLabel(userBundle.getString("label.phone"));
+        this.phoneField = new JTextField();
+        this.phoneLabelError = new JLabel();
 
         this.passwordLabel = new JLabel(userBundle.getString("label.password"));
         this.passwordField = new JPasswordField();
         this.passwordField.enableInputMethods(false);
         this.passwordLabelError = new JLabel();
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         firstNameInputGroup = new InputGroup(firstNameLabel, firstNameField, firstNameLabelError);
         add(firstNameInputGroup);
@@ -99,15 +100,15 @@ public class UserForm extends JPanel {
             }
         });
 
-        emailInputGroup = new InputGroup(emailLabel, emailField, emailLabelError);
-        add(emailInputGroup);
-        emailInputGroup.validate(new Validator() {
+        phoneInputGroup = new InputGroup(phoneLabel, phoneField, phoneLabelError);
+        add(phoneInputGroup);
+        phoneInputGroup.validate(new Validator() {
             @Override
             public boolean test() {
-                String text = (String) emailInputGroup.getValue();
-                boolean check = (text == null || text.trim().isEmpty()) || !text.matches(EMAIL_REGEX);
+                String text = (String) phoneInputGroup.getValue();
+                boolean check = (text == null || text.trim().isEmpty()) || !text.matches(PHONE_REGEX);
                 if(!check && user.getId() == null) {
-                    User old = UserController.getInstance().findByEmail(text);
+                    User old = UserController.getInstance().findByTelephone(text);
                     if(old != null) {
                         check = true;
                     }
@@ -126,8 +127,9 @@ public class UserForm extends JPanel {
             }
         });
 
-        sendButton = new JButton(userBundle.getString("button.send"));
         add(sendButton);
+
+        add(cancelButton);
 
         bind();
 
@@ -168,13 +170,13 @@ public class UserForm extends JPanel {
                         lastNameInputGroup.setError(UserForm.userBundle.getString("error.last_name"));
                     } else {
                         lastNameInputGroup.setError("");
-                        emailField.grabFocus();
+                        phoneField.grabFocus();
                     }
                 }
             }
         });
 
-        emailInputGroup.setKeyListener(new KeyAdapter() {
+        phoneInputGroup.setKeyListener(new KeyAdapter() {
 
             @Override
             public void keyTyped(KeyEvent e) {
@@ -185,10 +187,10 @@ public class UserForm extends JPanel {
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    if (emailInputGroup.hasError()) {
-                        emailInputGroup.setError(UserForm.userBundle.getString("error.email"));
+                    if (phoneInputGroup.hasError()) {
+                        phoneInputGroup.setError(UserForm.userBundle.getString("error.phone"));
                     } else {
-                        emailInputGroup.setError("");
+                        phoneInputGroup.setError("");
                         passwordField.grabFocus();
                     }
                 }
@@ -241,12 +243,12 @@ public class UserForm extends JPanel {
             return null;
         }
         user.setLast_name((String) lastNameInputGroup.getValue());
-        if (emailInputGroup.hasError()) {
-            emailField.grabFocus();
-            emailInputGroup.setError(UserForm.userBundle.getString("error.email"));
+        if (phoneInputGroup.hasError()) {
+            phoneField.grabFocus();
+            phoneInputGroup.setError(UserForm.userBundle.getString("error.phone"));
             return null;
         }
-        user.setEmail((String) emailInputGroup.getValue());
+        user.setTelephone((String) phoneInputGroup.getValue());
         if (passwordInputGroup.hasError()) {
             passwordField.grabFocus();
             passwordInputGroup.setError(UserForm.userBundle.getString("error.password"));
@@ -270,4 +272,22 @@ public class UserForm extends JPanel {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    @Override
+    public void layoutContainer(Container parent) {
+        Rectangle bound = parent.getBounds();
+        int inset = 4;
+        int x = bound.x;
+        int y = bound.y;
+        int width = bound.width;
+        int height = bound.height;
+        int buttonWidth = 120;
+        int inputGroupHeight = 60;
+        firstNameInputGroup.setBounds(inset, 0, width - inset, inputGroupHeight);
+        lastNameInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
+        phoneInputGroup.setBounds(inset, 2 * inputGroupHeight, width - inset, inputGroupHeight);
+        passwordInputGroup.setBounds(inset, 3 * inputGroupHeight, width - inset, inputGroupHeight);
+
+        sendButton.setBounds(x + width - buttonWidth - 2 * inset, y + height - 45, buttonWidth, 30);
+        cancelButton.setBounds(x + width - (2 * buttonWidth + 2 * inset), y + height - 45, buttonWidth, 30);
+    }
 }

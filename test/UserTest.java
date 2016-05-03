@@ -32,7 +32,7 @@ public class UserTest {
     public static void loadData() {
         for (int i = 0; i < EMAILS.length; i++) {
             User user = new User();
-            user.setEmail(EMAILS[i]);
+            user.setTelephone(EMAILS[i]);
             user.setFirst_name(NAMES[i]);
             user.setLast_name("");
             user.save();
@@ -47,20 +47,20 @@ public class UserTest {
 
     @Test
     public void user_must_be_found_when_email_is_correct() {
-        User user = controller.findByEmail("cheickm.sissoko@gmail.com");
+        User user = controller.findByTelephone("cheickm.sissoko@gmail.com");
         assertNotNull(user);
     }
 
     @Test(expected = PersistenceException.class)
     public void an_exception_must_be_thrown_when_duplicated_email() throws PersistenceException {
         User user = new User();
-        user.setEmail("cheickm.sissoko@gmail.com");
+        user.setTelephone("cheickm.sissoko@gmail.com");
         user.save();
     }
 
 
     @After
     public void tearDown() {
-        controller.delete("User u");
+        controller.delete("User");
     }
 }

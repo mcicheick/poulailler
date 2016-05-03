@@ -11,13 +11,17 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Created by sissoko on 13/02/2016.
  */
 public abstract class ModelView extends JPanel implements LayoutManager {
-    protected java.util.List<ModelListener> listenerList;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -414916807521239990L;
+	protected java.util.List<ModelListener> listenerList;
     protected Dimension origin = new Dimension(0, 0);
     protected TableSorter sorter;
     protected ModelTable dataBase;
@@ -37,7 +41,12 @@ public abstract class ModelView extends JPanel implements LayoutManager {
 
     public ModelView() {
         this(new ModelTable() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void addRow() {
             }
 
@@ -116,13 +125,13 @@ public abstract class ModelView extends JPanel implements LayoutManager {
                         continue;
                     }
                     if (model.getId() != null) {
+                        System.out.println(model);
                         model.delete();
                     }
                     toRemove.add(model);
                 }
 
-                for (int i = 0; i < toRemove.size(); i++) {
-                    Model model = toRemove.get(i);
+                for (Model model : toRemove) {
                     dataBase.removeRow(model);
                 }
                 dataBase.fireTableDataChanged();

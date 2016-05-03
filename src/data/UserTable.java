@@ -8,8 +8,13 @@ import models.User;
  */
 public class UserTable extends ModelTable {
 
-    public UserTable() {
-        this.columnNames = new String[]{"ID", "PRÉNOM", "NOM", "EMAIL"};
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2935073504699261122L;
+
+	public UserTable() {
+        this.columnNames = new String[]{"ID", "PRÉNOM", "NOM", "TELEPHONE"};
         this.models = UserController.getInstance().select("o from User o order by o.first_name asc").getResultList();
     }
 
@@ -24,7 +29,7 @@ public class UserTable extends ModelTable {
             case 2:
                 return client.getLast_name();
             case 3:
-                return client.getEmail();
+                return client.getTelephone();
         }
         return null;
     }
@@ -40,7 +45,7 @@ public class UserTable extends ModelTable {
                 client.setLast_name((String) aValue);
                 break;
             case 3:
-                client.setEmail((String) aValue);
+                client.setTelephone((String) aValue);
                 break;
         }
     }

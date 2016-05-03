@@ -67,7 +67,7 @@ public class DepenseBoard extends Board {
             Double paid = 0.0;
             Double remain = bande.getFixedCost();
             for (Depense depense : depenses) {
-                paid += depense.getAmount();
+                paid += depense.getTotal();
             }
 
             countLabel.setText(String.format( "Depense       : %d", depenses.size()));

@@ -1,6 +1,7 @@
 package data;
 
 import controllers.DepenseController;
+import models.Category;
 import models.Depense;
 import models.Bande;
 
@@ -18,7 +19,8 @@ public class DepenseTable extends ModelTable {
 
     public DepenseTable(List<Depense> depenses) {
         super(depenses);
-        this.columnNames = new String[]{"ID", "DATE DEPENSE", "MONTANT", "BANDE", "DESCRIPTION"};
+        // "DATE DEPENSE", "MONTANT", "BANDE", "CATEGORY", "DESCRIPTION"
+        this.columnNames = new String[]{"ID", "CATEGORY", "BANDE", "DATE DEPENSE", "QUANTITE", "PRIX UNITAIRE", "TOTAL", "DESCRIPTION"};
     }
 
     @Override
@@ -28,12 +30,18 @@ public class DepenseTable extends ModelTable {
             case 0:
                 return depense.getId();
             case 1:
-                return depense.getDepense_date();
+                return depense.getCategory();
             case 2:
-                return depense.getAmount();
-            case 3:
                 return depense.getBande();
+            case 3:
+                return depense.getDepense_date();
             case 4:
+                return depense.getQuantity();
+            case 5:
+                return depense.getUnit_price();
+            case 6:
+                return depense.getTotal();
+            case 7:
                 return depense.getDescription();
         }
         return null;
@@ -42,17 +50,24 @@ public class DepenseTable extends ModelTable {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         Depense depense = (Depense) models.get(rowIndex);
+        // "ID", "CATEGORY", "BANDE", "DATE DEPENSE", "QUANTITE", "PRIX UNITAIRE", "TOTAL", "DESCRIPTION"
         switch (columnIndex) {
             case 1:
-                depense.setDepense_date((Date) aValue);
+                depense.setCategory((Category) aValue);
                 break;
             case 2:
-                depense.setAmount((Double) aValue);
-                break;
-            case 3:
                 depense.setBande((Bande) aValue);
                 break;
+            case 3:
+                depense.setDepense_date((Date) aValue);
+                break;
             case 4:
+                depense.setQuantity(((Number) aValue).intValue());
+                break;
+            case 5:
+                depense.setUnit_price(((Number) aValue).doubleValue());
+                break;
+            case 7:
                 depense.setDescription((String) aValue);
                 break;
         }
@@ -60,19 +75,31 @@ public class DepenseTable extends ModelTable {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
+        // "ID", "CATEGORY", "BANDE", "DATE DEPENSE", "QUANTITE", "PRIX UNITAIRE", "TOTAL", "DESCRIPTION"
         switch (columnIndex) {
             case 0:
                 return Long.class;
             case 1:
-                return Date.class;
+                return Category.class;
             case 2:
-                return Double.class;
-            case 3:
                 return Bande.class;
+            case 3:
+                return Date.class;
             case 4:
+                return Integer.class;
+            case 5:
+                return Double.class;
+            case 6:
+                return Double.class;
+            case 7:
                 return String.class;
         }
         return super.getColumnClass(columnIndex);
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return super.isCellEditable(rowIndex, columnIndex) && columnIndex != 6;
     }
 
     /**

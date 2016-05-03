@@ -99,6 +99,12 @@ public class Client extends Model {
 
     @Override
     public String toString() {
-        return String.format("%s %s", first_name, last_name);
+        String format = "";
+        if(first_name != null) {
+            format = String.format("%s %s", first_name, last_name);
+        } else {
+            format = phone;
+        }
+        return format;
     }
 }

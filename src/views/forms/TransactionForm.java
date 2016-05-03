@@ -64,8 +64,6 @@ public class TransactionForm extends BaseForm {
     protected JLabel clientLabelError;
     protected InputGroup clientInputGroup;
 
-    protected JButton sendButton;
-
     public TransactionForm() {
         this(new Transaction());
     }
@@ -85,12 +83,7 @@ public class TransactionForm extends BaseForm {
         this.bandeField = new JComboBox<Bande>();
         this.bandeLabelError = new JLabel();
         this.bandeInputGroup = new InputGroup(bandeLabel, bandeField, bandeLabelError);
-        bandeInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return bandeInputGroup.getValue() == null;
-            }
-        });
+
         add(bandeInputGroup);
         List<Bande> bandes = BandeController.getInstance().select("b from Bande b").getResultList();
         this.bandeField.setModel(new DefaultComboBoxModel<Bande>(new Vector<Bande>(bandes)));
@@ -100,12 +93,7 @@ public class TransactionForm extends BaseForm {
         this.clientField = new JComboBox<Client>();
         this.clientLabelError = new JLabel();
         this.clientInputGroup = new InputGroup(clientLabel, clientField, clientLabelError);
-        clientInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return clientInputGroup.getValue() == null;
-            }
-        });
+
         add(clientInputGroup);
         List<Client> clients = ClientController.getInstance().select("b from Client b").getResultList();
         this.clientField.setModel(new DefaultComboBoxModel<Client>(new Vector<Client>(clients)));
@@ -115,12 +103,7 @@ public class TransactionForm extends BaseForm {
         this.transaction_dateField = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
         this.transaction_dateLabelError = new JLabel();
         this.transaction_dateInputGroup = new InputGroup(transaction_dateLabel, transaction_dateField, transaction_dateLabelError);
-        transaction_dateInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return transaction_dateInputGroup.getValue() == null;
-            }
-        });
+
         add(transaction_dateInputGroup);
         this.transaction_dateField.setValue(transaction.getTransaction_date());
 
@@ -128,12 +111,7 @@ public class TransactionForm extends BaseForm {
         this.unit_priceField = new JFormattedTextField(new DecimalFormat("#.##"));
         this.unit_priceLabelError = new JLabel();
         this.unit_priceInputGroup = new InputGroup(unit_priceLabel, unit_priceField, unit_priceLabelError);
-        unit_priceInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return unit_priceInputGroup.getValue() == null;
-            }
-        });
+
         add(unit_priceInputGroup);
         this.unit_priceField.setValue(transaction.getUnit_price());
 
@@ -141,12 +119,7 @@ public class TransactionForm extends BaseForm {
         this.price_by_kiloField = new JFormattedTextField(new DecimalFormat("#.##"));
         this.price_by_kiloLabelError = new JLabel();
         this.price_by_kiloInputGroup = new InputGroup(price_by_kiloLabel, price_by_kiloField, price_by_kiloLabelError);
-        price_by_kiloInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return price_by_kiloInputGroup.getValue() == null;
-            }
-        });
+
         add(price_by_kiloInputGroup);
         this.price_by_kiloField.setValue(transaction.getPrice_by_kilo());
 
@@ -154,12 +127,7 @@ public class TransactionForm extends BaseForm {
         this.quantityField = new JFormattedTextField(new DecimalFormat("#.##"));
         this.quantityLabelError = new JLabel();
         this.quantityInputGroup = new InputGroup(quantityLabel, quantityField, quantityLabelError);
-        quantityInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return quantityInputGroup.getValue() == null;
-            }
-        });
+
         add(quantityInputGroup);
         this.quantityField.setValue(transaction.getQuantity());
 
@@ -167,17 +135,12 @@ public class TransactionForm extends BaseForm {
         this.weightField = new JFormattedTextField(new DecimalFormat("#.##"));
         this.weightLabelError = new JLabel();
         this.weightInputGroup = new InputGroup(weightLabel, weightField, weightLabelError);
-        weightInputGroup.validate(new Validator() {
-            @Override
-            public boolean test() {
-                return weightInputGroup.getValue() == null;
-            }
-        });
+
         add(weightInputGroup);
         this.weightField.setValue(transaction.getWeight());
 
-        sendButton = new JButton(bundle.getString("button.send"));
         add(sendButton);
+
         add(cancelButton);
         bind();
     }
@@ -345,7 +308,13 @@ public class TransactionForm extends BaseForm {
             quantityInputGroup.setError(TransactionForm.bundle.getString("error.quantity"));
             return null;
         }
-        transaction.setQuantity(((Number) quantityInputGroup.getValue()).doubleValue());
+        Double quantity = ((Number) quantityInputGroup.getValue()).doubleValue();
+        if(quantity > transaction.getBande().getRemain_count()) {
+            quantityField.grabFocus();
+            quantityInputGroup.setError(String.format("Quantité trop élévée maximum (%d) depassé", transaction.getBande().getRemain_count()));
+            return null;
+        }
+        transaction.setQuantity(quantity);
         
         if (weightInputGroup.hasError()) {
             weightField.grabFocus();
@@ -371,8 +340,8 @@ public class TransactionForm extends BaseForm {
         clientInputGroup.setBounds(inset, inputGroupHeight, width - inset, inputGroupHeight);
         transaction_dateInputGroup.setBounds(inset, 2 * inputGroupHeight, width - inset, inputGroupHeight);
         unit_priceInputGroup.setBounds(inset, 3 * inputGroupHeight, width - inset, inputGroupHeight);
-        price_by_kiloInputGroup.setBounds(inset, 4 * inputGroupHeight, width - inset, inputGroupHeight);
-        quantityInputGroup.setBounds(inset, 5 * inputGroupHeight, width - inset, inputGroupHeight);
+        quantityInputGroup.setBounds(inset, 4 * inputGroupHeight, width - inset, inputGroupHeight);
+        price_by_kiloInputGroup.setBounds(inset, 5 * inputGroupHeight, width - inset, inputGroupHeight);
         weightInputGroup.setBounds(inset, 6 * inputGroupHeight, width - inset, inputGroupHeight);
 
         sendButton.setBounds(x + width - buttonWidth - 2 * inset, y + height - 45, buttonWidth, 30);

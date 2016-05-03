@@ -17,6 +17,7 @@ import java.util.Vector;
  * Created by sissoko on ${date}.
  */
 public class ${Model}Form extends BaseForm implements LayoutManager {
+
     /*
     protected JLabel bandeLabel;
     protected JComboBox<Bande> bandeField;
@@ -72,17 +73,16 @@ public class ${Model}Form extends BaseForm implements LayoutManager {
 
     private void bind() {
 
-        /**
-        death_dateInputGroup.setKeyListener(new KeyAdapter() {
+        /*
+        ${model}_dateInputGroup.setKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    if (death_dateInputGroup.hasError()) {
-                        death_dateInputGroup.setError("La date est incorrecte");
+                    if (${model}_dateInputGroup.hasError()) {
+                        ${model}_dateInputGroup.setError("La date est incorrecte");
                     } else {
-                        death_dateInputGroup.setError("");
-                        amountField.grabFocus();
+                        ${model}_dateInputGroup.setError("");
                     }
                 }
             }
@@ -143,7 +143,7 @@ public class ${Model}Form extends BaseForm implements LayoutManager {
             return null;
         }
         ${model}_dateInputGroup.setError("");
-        ${model}.setDepense_date((Date) ${model}_dateInputGroup.getValue());
+        ${model}.set${Model}_date((Date) ${model}_dateInputGroup.getValue());
         */
 
         return ${model};

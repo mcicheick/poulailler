@@ -1,7 +1,6 @@
 package models;
 
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +12,8 @@ import java.util.List;
 @Table(name = "T_BANDES")
 public class Bande extends Model {
 
+    @Column(name = "TITLE")
+    private String title;
     @Basic(optional = false)
     @Column(name = "ARRIVED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
@@ -21,6 +22,10 @@ public class Bande extends Model {
     private Integer initial_count;
     @Column(name = "PRICE")
     private Double price;
+
+    @Column(name = "BONUS")
+    private Double bonus;
+
     @ManyToOne
     @JoinColumn(name = "USER_ID", referencedColumnName = "id")
     private User user;
@@ -37,6 +42,9 @@ public class Bande extends Model {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
     private List<Death> deaths;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bande")
+    private List<Remember> remembers;
+
     public Bande() {
         super();
         this.transactions = new ArrayList<>();
@@ -46,6 +54,21 @@ public class Bande extends Model {
         this.arrived_date = new Date();
         this.initial_count = 0;
         this.price = 0.0;
+        this.bonus = 0.02;
+    }
+
+    /**
+     * @return title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Date getArrived_date() {
@@ -60,12 +83,24 @@ public class Bande extends Model {
         return initial_count;
     }
 
+    /**
+     *
+     * @param initial_count
+     */
     public void setInitial_count(Integer initial_count) {
         this.initial_count = initial_count;
     }
 
+    public Double getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Double bonus) {
+        this.bonus = bonus;
+    }
+
     public Integer getRemain_count() {
-        int remain_count = initial_count;
+        int remain_count = (int) (initial_count * (1 + bonus));
         for (int i = 0; i < transactions.size(); i++) {
             Transaction transaction = transactions.get(i);
             remain_count -= transaction.getQuantity();
@@ -108,7 +143,7 @@ public class Bande extends Model {
 
     @Override
     public String toString() {
-        return String.format("Bande[%d] du %s", getId(), new SimpleDateFormat("dd/MM/yyyy").format(arrived_date));
+        return String.format("%s", title);
     }
 
     public Double getSold() {
@@ -125,7 +160,7 @@ public class Bande extends Model {
     }
 
     public Double getFixedCost() {
-        if(price == null) {
+        if (price == null) {
             price = 0.0;
         }
         Double cost = price * initial_count;
@@ -141,7 +176,7 @@ public class Bande extends Model {
         Double spent = 0.0;
         for (int i = 0; i < depenses.size(); i++) {
             Depense depense = depenses.get(i);
-            spent += depense.getAmount();
+            spent += depense.getTotal();
         }
         return spent;
     }
@@ -159,6 +194,10 @@ public class Bande extends Model {
 
     public List<Death> getDeaths() {
         return deaths;
+    }
+
+    public List<Remember> getRemembers() {
+        return remembers;
     }
 
     public boolean isFinish() {

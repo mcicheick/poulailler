@@ -9,6 +9,7 @@ import views.forms.PaymentForm;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +20,7 @@ import java.util.Vector;
 /**
  * Created by sissoko on 13/02/2016.
  */
+@SuppressWarnings("serial")
 public class PaymentView extends ModelView {
 
     public PaymentView() {
@@ -32,6 +34,7 @@ public class PaymentView extends ModelView {
             public void actionPerformed(ActionEvent e) {
                 final PJDialog dialog = new PJDialog(getObserver());
                 Payment payment = new Payment();
+                dialog.setTitle(payment.toString());
                 payment.setTransaction((Transaction)getModel());
                 PaymentForm form = new PaymentForm(payment);
                 dialog.add(form);
@@ -58,7 +61,6 @@ public class PaymentView extends ModelView {
             }
         });
 
-
         render();
     }
 
@@ -75,7 +77,7 @@ public class PaymentView extends ModelView {
             public void actionPerformed(ActionEvent e) {
                 Payment binded = form.getPayment();
                 if(binded != null) {
-                    binded.save();
+                    //binded.save();
                     dialog.dispose();
                 }
             }

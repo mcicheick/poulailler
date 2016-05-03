@@ -1,5 +1,7 @@
 package views.forms;
 
+import views.ModelView;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ResourceBundle;
@@ -13,9 +15,13 @@ public abstract class BaseForm extends JPanel implements LayoutManager {
     protected JButton sendButton;
     protected JButton cancelButton;
 
+    private JDialog owner;
+
+    protected ModelView viewer;
+
     public BaseForm() {
-        sendButton = new JButton("Send");
-        cancelButton = new JButton("Cancel");
+        sendButton = new JButton(bundle.getString("button.send"));
+        cancelButton = new JButton(bundle.getString("button.cancel"));
     }
 
     @Override
@@ -42,5 +48,21 @@ public abstract class BaseForm extends JPanel implements LayoutManager {
 
     public JButton getCancelButton() {
         return cancelButton;
+    }
+
+    public JDialog getOwner() {
+        return owner;
+    }
+
+    public void setOwner(JDialog owner) {
+        this.owner = owner;
+    }
+
+    public ModelView getViewer() {
+        return viewer;
+    }
+
+    public void setViewer(ModelView viewer) {
+        this.viewer = viewer;
     }
 }

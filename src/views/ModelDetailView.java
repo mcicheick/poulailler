@@ -3,6 +3,7 @@ package views;
 import models.Model;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by sissoko on 19/02/2016.
  */
+@SuppressWarnings("serial")
 public class ModelDetailView extends ModelView implements LayoutManager {
 
     protected Dimension origin = new Dimension(0, 0);
@@ -44,6 +46,8 @@ public class ModelDetailView extends ModelView implements LayoutManager {
                 tabbedPane.setSelectedIndex(2);
             } else if ("Observations".equalsIgnoreCase(link)) {
                 tabbedPane.setSelectedIndex(3);
+            } else if ("Remembers".equalsIgnoreCase(link)) {
+                tabbedPane.setSelectedIndex(4);
             }
         }
     }

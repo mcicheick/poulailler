@@ -62,7 +62,7 @@ public class DeathForm extends BaseForm implements LayoutManager {
         this.bandeField.setSelectedItem(death.getBande());
 
         this.death_dateLabel = new JLabel("Date death");
-        this.death_dateField = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
+        this.death_dateField = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"));
         this.death_dateLabelError = new JLabel();
         this.death_dateInputGroup = new InputGroup(death_dateLabel, death_dateField, death_dateLabelError);
         add(death_dateInputGroup);
@@ -164,7 +164,13 @@ public class DeathForm extends BaseForm implements LayoutManager {
             return null;
         }
         death_countInputGroup.setError("");
-        death.setDeath_count(((Number) death_countInputGroup.getValue()).intValue());
+        Integer count = ((Number) death_countInputGroup.getValue()).intValue();
+        if(count > death.getBande().getRemain_count()) {
+            death_countField.grabFocus();
+            death_countInputGroup.setError("Le nombre est incorrect. Il ne peut pas y avoir plus de mort que de poulet :)");
+            return null;
+        }
+        death.setDeath_count(count);
 
         if (death_dateInputGroup.hasError()) {
             death_dateField.grabFocus();

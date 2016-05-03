@@ -5,10 +5,15 @@ import controllers.ClientController;
 import data.TransactionTable;
 import models.Bande;
 import models.Client;
+import models.Model;
+import models.Transaction;
+import views.forms.TransactionForm;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
@@ -24,6 +29,41 @@ public class TransactionView extends ModelView {
 
     public TransactionView(TransactionTable dataBase) {
         super(dataBase);
+        setActionListener(newButton, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final PJDialog dialog = new PJDialog(getObserver());
+                Transaction transaction = new Transaction();
+                Model model = getModel();
+                if(model instanceof Bande) {
+                    transaction.setBande((Bande) model);
+                } else if (model instanceof Client) {
+                    transaction.setClient((Client) model);
+                }
+                TransactionForm form = new TransactionForm(transaction);
+                dialog.add(form);
+                dialog.setVisible(true);
+                setActionListener(form.getSendButton(), new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Transaction binded = form.getTransaction();
+                        if(binded != null) {
+                            binded.save();
+                            dialog.dispose();
+                            dataBase.addModel(binded);
+                            dataBase.fireTableDataChanged();
+                        }
+                    }
+                });
+
+                setActionListener(form.getCancelButton(), new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                });
+            }
+        });
         render();
     }
 

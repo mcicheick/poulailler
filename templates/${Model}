@@ -12,7 +12,28 @@ import java.util.List;
 @Entity
 @Table(name = "T_${MODEL}S")
 public class ${Model} extends Model {
+
+	/*
+	@ManyToOne
+	@JoinColumn(name = "BANDE_ID")
+	private Bande bande;
+	@Basic(optional = false)
+	@Column(name = "${MODEL}_DATE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date ${model}_date;
+	*:
+	
     public ${Model}(){
         super();
     }
+    
+    /*
+	public Bande getBande() {
+		return bande;
+	}
+
+	public Date get${Model}_date() {
+		return ${model}_date;
+	}
+	*/
 }

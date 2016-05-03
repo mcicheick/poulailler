@@ -1,0 +1,3 @@
+USER
+Ousmane	Coulibaly	78901234	unmdp
+Cheick Mahady	Sissoko	77291138	password

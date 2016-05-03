@@ -4,6 +4,7 @@ import dao.Emf;
 import models.DaoImp;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 /**
@@ -39,7 +40,7 @@ public abstract class Controller<M extends DaoImp> {
      * @param args
      * @return
      */
-    public Query select(String q, Object... args) {
+    public Query select(String q, Object... args) throws PersistenceException {
         EntityManager em = getEntityManager();
         Query query = em.createQuery("select " + q);
         for (int i = 1; i <= args.length; i++) {

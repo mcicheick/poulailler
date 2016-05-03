@@ -25,7 +25,7 @@ public class UserController extends Controller<User> {
 
     @Override
     public User findById(Object id) {
-        List<User> users = find("select o from Client o where o.id = ?1", id).getResultList();
+        List<User> users = select("o from Client o where o.id = ?1", id).getResultList();
         if (users.isEmpty()) {
             return null;
         }
@@ -34,11 +34,11 @@ public class UserController extends Controller<User> {
 
     /**
      *
-     * @param email
+     * @param telephone
      * @return
      */
-    public User findByEmail(String email) {
-        List<User> users = find("select u from User u where u.email = ?1", email).getResultList();
+    public User findByTelephone(String telephone) {
+        List<User> users = select("u from User u where u.telephone = ?1", telephone).getResultList();
         if (users.isEmpty()) {
             return null;
         }

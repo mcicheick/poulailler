@@ -43,7 +43,7 @@ public class Dashboard extends ModelView implements LayoutManager {
 
         stockPanel = new StockBoard();
         stockPanel.setOpaque(true);
-        stockPanel.setBackground(Color.blue);
+        stockPanel.setBackground(Color.WHITE);
 
         transactionPanel = new TransactionBoard();
         transactionPanel.setOpaque(true);
@@ -114,7 +114,11 @@ public class Dashboard extends ModelView implements LayoutManager {
         stockPanel.deathLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                fireModel(bandeBox.getItemAt(bandeBox.getSelectedIndex()));
+            	int selected = bandeBox.getSelectedIndex();
+            	if(selected < 0) {
+            		return;
+            	}
+                fireModel(bandeBox.getItemAt(selected));
                 fireEvent("Deaths");
             }
         });
@@ -123,7 +127,11 @@ public class Dashboard extends ModelView implements LayoutManager {
         transactionPanel.titleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                fireModel(bandeBox.getItemAt(bandeBox.getSelectedIndex()));
+            	int selected = bandeBox.getSelectedIndex();
+            	if(selected < 0) {
+            		return;
+            	}
+                fireModel(bandeBox.getItemAt(selected));
                 fireEvent("Transactions");
             }
         });
@@ -132,7 +140,11 @@ public class Dashboard extends ModelView implements LayoutManager {
         depensePanel.titleLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                fireModel(bandeBox.getItemAt(bandeBox.getSelectedIndex()));
+            	int selected = bandeBox.getSelectedIndex();
+            	if(selected < 0) {
+            		return;
+            	}
+                fireModel(bandeBox.getItemAt(selected));
                 fireEvent("Depenses");
             }
         });

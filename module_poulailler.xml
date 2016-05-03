@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_poulailler" default="compile.module.poulailler">
+  <dirname property="module.poulailler.basedir" file="${ant.file.module_poulailler}"/>
+  
+  <property name="module.jdk.home.poulailler" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.poulailler" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.poulailler" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.poulailler" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="poulailler.output.dir" value="${module.poulailler.basedir}/out/production/Poulailler"/>
+  <property name="poulailler.testoutput.dir" value="${module.poulailler.basedir}/out/test/Poulailler"/>
+  
+  <path id="poulailler.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="poulailler.module.production.classpath">
+    <path refid="${module.jdk.classpath.poulailler}"/>
+    <path refid="library.mysql-connector-java-5.1.35.classpath"/>
+  </path>
+  
+  <path id="poulailler.runtime.production.module.classpath">
+    <pathelement location="${poulailler.output.dir}"/>
+    <path refid="library.mysql-connector-java-5.1.35.classpath"/>
+  </path>
+  
+  <path id="poulailler.module.classpath">
+    <path refid="${module.jdk.classpath.poulailler}"/>
+    <pathelement location="${poulailler.output.dir}"/>
+    <path refid="library.mysql-connector-java-5.1.35.classpath"/>
+  </path>
+  
+  <path id="poulailler.runtime.module.classpath">
+    <pathelement location="${poulailler.testoutput.dir}"/>
+    <pathelement location="${poulailler.output.dir}"/>
+    <path refid="library.mysql-connector-java-5.1.35.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.poulailler">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.poulailler">
+    <patternset refid="excluded.from.module.poulailler"/>
+  </patternset>
+  
+  <path id="poulailler.module.sourcepath">
+    <dirset dir="${module.poulailler.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  <path id="poulailler.module.test.sourcepath">
+    <dirset dir="${module.poulailler.basedir}">
+      <include name="test"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.poulailler" depends="compile.module.poulailler.production,compile.module.poulailler.tests" description="Compile module Poulailler"/>
+  
+  <target name="compile.module.poulailler.production" depends="register.custom.compilers" description="Compile module Poulailler; production classes">
+    <mkdir dir="${poulailler.output.dir}"/>
+    <javac2 destdir="${poulailler.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.poulailler}/javac">
+      <compilerarg line="${compiler.args.poulailler}"/>
+      <bootclasspath refid="poulailler.module.bootclasspath"/>
+      <classpath refid="poulailler.module.production.classpath"/>
+      <src refid="poulailler.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.poulailler"/>
+    </javac2>
+    
+    <copy todir="${poulailler.output.dir}">
+      <fileset dir="${module.poulailler.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.poulailler.tests" depends="register.custom.compilers,compile.module.poulailler.production" description="compile module Poulailler; test classes" unless="skip.tests">
+    <mkdir dir="${poulailler.testoutput.dir}"/>
+    <javac2 destdir="${poulailler.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.poulailler}/javac">
+      <compilerarg line="${compiler.args.poulailler}"/>
+      <bootclasspath refid="poulailler.module.bootclasspath"/>
+      <classpath refid="poulailler.module.classpath"/>
+      <src refid="poulailler.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.poulailler"/>
+    </javac2>
+    
+    <copy todir="${poulailler.testoutput.dir}">
+      <fileset dir="${module.poulailler.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.poulailler" description="cleanup module">
+    <delete dir="${poulailler.output.dir}"/>
+    <delete dir="${poulailler.testoutput.dir}"/>
+  </target>
+</project>

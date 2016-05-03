@@ -44,9 +44,6 @@ public class PaymentForm extends BaseForm {
     protected JLabel amountLabelError;
     protected InputGroup amountInputGroup;
 
-
-    protected JButton sendButton;
-
     public PaymentForm() {
         this(new Payment());
     }
@@ -86,9 +83,7 @@ public class PaymentForm extends BaseForm {
         this.amountInputGroup = new InputGroup(amountLabel, amountField, amountLabelError);
         amountField.setValue(payment.getAmount());
         add(amountInputGroup);
-
-        sendButton = new JButton(bundle.getString("button.send"));
-        cancelButton = new JButton(bundle.getString("button.cancel"));
+        
         add(sendButton);
         add(cancelButton);
     }
@@ -157,7 +152,13 @@ public class PaymentForm extends BaseForm {
             amountInputGroup.setError(PaymentForm.bundle.getString("error.amount"));
             return null;
         }
-        payment.setAmount(((Number) amountInputGroup.getValue()).doubleValue());
+        Double amount = ((Number) amountInputGroup.getValue()).doubleValue();
+        if(amount > payment.getTransaction().getRemainAmount()) {
+            amountField.grabFocus();
+            amountInputGroup.setError(PaymentForm.bundle.getString("error.amount"));
+            return null;
+        }
+        payment.setAmount(amount);
 
         return payment;
     }
@@ -170,10 +171,6 @@ public class PaymentForm extends BaseForm {
         frame.setBounds(200, 200, 500, 250);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    }
-
-    public JButton getSendButton() {
-        return sendButton;
     }
 
     @Override

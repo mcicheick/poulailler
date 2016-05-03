@@ -5,6 +5,7 @@ import views.ModelView;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,11 @@ import java.util.List;
  */
 public abstract class ModelTable extends AbstractTableModel {
 
-    protected String[] columnNames = {"ID"};
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4725734530106416885L;
+	protected String[] columnNames = {"ID"};
     protected List<Model> models;
 
     protected boolean editable = false;
@@ -26,7 +31,8 @@ public abstract class ModelTable extends AbstractTableModel {
         this(new ArrayList<>());
     }
 
-    public ModelTable(List models) {
+    @SuppressWarnings("unchecked")
+	public ModelTable(@SuppressWarnings("rawtypes") List models) {
         this.models = models;
     }
 
